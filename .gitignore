@@ -1,0 +1,13 @@
+# dist #
+/dist
+
+# Node Modules #
+/node_modules
+
+# Package File #
+*.jar
+*.zip
+*.tar.gz
+
+# IDE #
+.vscode
