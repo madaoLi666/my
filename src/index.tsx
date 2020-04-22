@@ -1,11 +1,16 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import {render} from 'react-dom';
+// import Home from './Home';
+import CircleProgress from './CircleProgress';
+import  './index.less';
 
-import styles from  './index.less';
-const render = () => {
-  ReactDOM.render(
-    <div className={styles.app}>123</div>,
-    document.getElementById('app')
-  )
-}
-render()
+const App = () => (
+  <div>
+    <CircleProgress
+      percent={80}
+    />
+  </div>
+)
+
+render(<App/>,document.getElementById('app'));
+

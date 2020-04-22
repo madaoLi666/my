@@ -1,13 +1,17 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
+    // "outDir": "./",
+    "module": "esnext",
+    "target": "esnext",
+    "lib": ["dom","esnext"],
+    "sourceMap": true,
     "jsx": "react",
-    "target": "es6",
-    "module": "commonjs",
-    "strict": true,
+    "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
-  }
-  // "files": [
-  //   "/types/index.d.ts",
-  // ]
+    "allowJs": true,
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "exclude": ["node_modules","dist"]
 }

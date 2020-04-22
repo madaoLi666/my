@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
@@ -13,6 +12,19 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.js(x)?$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              babelrc: true,
+              cacheDirectory: true,
+            }
+          }
+        ]
+      },
+      {
         test: /\.ts(x?)$/,
         use:[
           {
@@ -23,32 +35,19 @@ module.exports = {
           }
         ]
       },{
+        test: /\.css$/,
+        use: [
+          "style-loader",
+          "css-loader?modules&localIndentName=[path][name]__[local]--[hash:base64:5]"
+        ]
+      },{
         test: /\.less$/,
         exclude: [/node_modules/],
-        include: [path.join(__dirname, './../', 'src')],
-        // use: [
-        //   require.resolve('style-loader'),
-        //   {
-        //     loader: require.resolve('css-loader'),
-        //     options:{
-        //       modules: true,
-        //       // localIdentName:'[name]-[hash:8]'
-        //     }
-        //   },
-        //   {
-        //     loader: require.resolve('less-loader'),
-        //     options: {
-        //       modules: true,
-        //       // loaclIdentName:'[name]-[hash:8]'
-        //     }
-        //   },
-        // ],
-        loaders: [
-          'style',
-          'css?modules&importLoaders=1&localIdentName=[path]___[name]__[local]___[hash:base64:5]',
-          'resolve-url',
-          'less'
-        ]
+        use: [
+          "style-loader",
+          "css-loader?modules",
+          "less-loader"
+        ],
       }
     ]
   },
@@ -57,7 +56,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'build/tpl/index.html'
+      template: 'src/index.html'
     })
   ]
 }
