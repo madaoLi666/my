@@ -1,0 +1,28 @@
+@import './index.less';
+.form-item{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  // 这个时常规Input的高度
+  line-height: @normalInputHeight;
+  
+  .formItem-label {
+    height: @normalInputHeight;
+    display: flex;
+    flex-direction: row-reverse;
+    > label {
+      padding-right: @labelPaddingRight;
+      height: @normalInputHeight;
+      line-height: @normalInputHeight;
+      color: rgba(0,0,0,.85);
+      font-size: @normalFontSize;
+      text-align: right;
+    }
+  }
+
+  // label {
+  //   height: 100%;
+  //   position: relative;
+  //   right: ;
+  // }
+}

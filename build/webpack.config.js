@@ -34,13 +34,25 @@ module.exports = {
             }
           }
         ]
-      },{
+      },
+      // {
+      //   test: /\.css$/,
+      //   include: [/node_modules|antd\.css/],
+      //   use: [
+      //     "style-loader",
+      //     "css-loader"
+      //   ]
+      // },
+      // 暂时先这样 css不支持模块化
+      {
         test: /\.css$/,
+        // exclude: [/node_modules|antd\.css/],
         use: [
           "style-loader",
-          "css-loader?modules&localIndentName=[path][name]__[local]--[hash:base64:5]"
+          "css-loader"
         ]
-      },{
+      },
+      {
         test: /\.less$/,
         exclude: [/node_modules/],
         use: [

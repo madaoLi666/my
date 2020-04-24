@@ -2,9 +2,19 @@ import React,{Component} from 'react';
 import {Row, Col} from 'antd';
 import {MyFormProp, MyFormState, FormConfig} from './interface';
 import { createFormHandler} from './form.js';
-import FormItem from './formItem'
+import FormItem from './formItem';
 
-export function renderForm(config:Array<FormConfig> , formHandler:any){
+import styles from './index.less';
+
+
+const defaultGutterConfig = {
+  gutter: [0,16], // px
+  justify: "left"
+}
+export function renderForm(config:Array<FormConfig> , formHandler:any, gridConfig:any = defaultGutterConfig){
+  
+  
+
   if(!config) throw new Error('config is undefined');
   if(Object.prototype.toString.call(config) !== '[object Array]') throw new Error(`Expect array but ${typeof config}`);
   
@@ -19,7 +29,12 @@ export function renderForm(config:Array<FormConfig> , formHandler:any){
     count += config[i].span + (config[i].offset || 0);
     if(count > 24){
       formDom.push(
-        <Row key={`row-${row}`}>{spanArr}</Row>
+        <Row 
+          key={`row-${row}`} 
+          {...gridConfig}
+        >
+            {spanArr}
+        </Row>
       )
       spanArr = []; 
       count = config[i].span + (config[i].offset || 0);
@@ -33,14 +48,15 @@ export function renderForm(config:Array<FormConfig> , formHandler:any){
           defaultValue={config[i].value}
           type={config[i].type}
           label={config[i].label}
+          componentOption={config[i].componentOption}
         />
       </Col>
     )
   }
   if(spanArr){
-    formDom.push(<Row key={`row-${row}`}>{spanArr}</Row>)
+    formDom.push(<Row key={`row-${row}`} {...gridConfig}>{spanArr}</Row>)
   }
-  return (<div style={{width: '100%'}}>{formDom}</div>);
+  return formDom;
 }
 
 
@@ -66,8 +82,8 @@ export default class MyForm extends Component<MyFormProp, MyFormState>{
 
   render(){
     return(
-      <div>
-        <div style={{display: "flex", flexDirection: "row"}}>
+      <div className={styles['my-form']}>
+        <div>
           {renderForm(this.props.config, this.state.formHandler)}
         </div>
       </div>

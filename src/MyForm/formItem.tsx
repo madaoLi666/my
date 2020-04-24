@@ -1,8 +1,10 @@
 import React,{ Component} from 'react';
 import { Row, Col ,Input, Button } from 'antd';
 // import MyInput from './components/input';
-// import MyComponents from './components/index';
+import MyComponents from './components/index';
 import { FormItemProp, FormItemState } from './interface';
+
+import styles from './formItem.less';
 
 export default class FormItem extends Component<FormItemProp,FormItemState>{
   constructor(props:FormItemProp){
@@ -25,8 +27,8 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
     this.setState({value: this.props.defaultValue});
   }
 
-  handleChange = (e:any) => {
-    this.setState({value: e.target.value},() => {
+  handleChange = (val:any) => {
+    this.setState({value: val},() => {
       if(this.props.actions.setValue){
         this.props.actions.setValue(this.state.value)
       }else{
@@ -36,31 +38,33 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
   }
 
   render(){
-    const { dispatch, type, label } = this.props;
+    const { dispatch, type, label, componentOption } = this.props;
     const { value } = this.state;
-    // const MyComponent = MyComponents[type];
+    const MyComponent = MyComponents[type];
     return(
-      <div>
-        <Input
-          onChange={this.handleChange}
-          value={value}
-        />
-        {/* {MyComponent ? (
-          <div style={{display: 'flex'}}>
-            <label>{label}:</label>
-            <MyComponent
-              onChange={this.handleChange}
-              dispatch={dispatch}
-              value={value}
-            />
-          </div>
+      
 
-        ): (
-          <div>
-            <span>组件<strong>{type}</strong>不存在</span>
-          </div>
-        )} */}
-      </div>
+      <Row className={styles['form-item']}>
+          {/* default 8:16 */}
+          <Col span={8} className={styles['formItem-label']}>
+            <label>{label}:</label>
+          </Col>
+          <Col span={16}>
+            {MyComponent ? (
+              <MyComponent
+                onChange={this.handleChange}
+                dispatch={dispatch}
+                value={value}
+                componentOption={componentOption}
+              />
+              ) : (
+                <strong>
+                  组件{type}不存在
+                </strong>
+              )}
+          </Col>
+          
+        </Row>
     )
   }
 }
