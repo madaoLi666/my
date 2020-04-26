@@ -1,6 +1,6 @@
 export interface ComponentOption{
   type: string|null, // 单一组件多重展开
-  valid: string|RegExp|null,
+  valid: Array<string|RegExp|object>|string|RegExp|null|undefined,
   // select
   selectOption?: Array<{value:string, label:string}>|null,
   // date
@@ -15,7 +15,7 @@ export interface FormConfig{
   offset?:number,
   hidden?:boolean,
   value?: any,
-  componentOption: ComponentOption|null
+  componentOption: ComponentOption,
 }
 
 export interface MyFormProp{
@@ -32,15 +32,19 @@ export interface MyFormState{
 export interface FormItemProp{
   actions:{
     setValue?:(val:any) => void
-    getValue?:() => any
+    getValue?:() => any,
+    valid?:() => any
   },
   dispatch:() => void,
   defaultValue?: any,
   type: string,
   label: string,
-  componentOption: ComponentOption|null
+  componentOption: ComponentOption|null,
+  validate?: Array<string|RegExp|object>|string|RegExp
 }
 
 export interface FormItemState{
-  value:any
+  value: any,
+  error: any,
+  validate: Array<string|RegExp|object>|string|RegExp
 }

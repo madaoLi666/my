@@ -20,9 +20,17 @@
     }
   }
 
-  // label {
-  //   height: 100%;
-  //   position: relative;
-  //   right: ;
-  // }
+  .formItem-main {
+    > span {
+      height: @normalInputHeight;
+      line-height: @normalInputHeight;
+    }
+    // TODO
+    // 考虑加入一个错误样式用于报渲染的错误
+  }
+
+  .formItem-error{
+    text-align: left;
+    color: red;
+  }
 }

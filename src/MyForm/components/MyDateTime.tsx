@@ -9,29 +9,37 @@ interface MyDatePickerProp{
   componentOption: any
 }
 
+/**
+ * 不接收对象/数组
+ */
 
 
 const defaultType = "date";
 // format需要做限制
 const defaultFormat = "YYYY-MM-DD";
+
+function isVaildDate(date: Date):boolean{
+  return date instanceof Date && !isNaN(date.getTime());
+}
+
 export default function MyDateTime(props: MyDatePickerProp){
   const handleChange = (value:any) => {
-    console.log(value);
+    // console.log(value);
     props.onChange(value);
   }
 
   const renderDatePicker = () => {
     if(props.componentOption){
       const { type = defaultType, format = defaultFormat} = props.componentOption;
-      let val;
-      try{
-        // 这个位置连对象都能转...没有什么意义
-        val = moment(props.value);
-      }catch(e){
-        console.log('error');
-        return <span>请检查输入值是否为常用日期/时间格式</span>
+      let val = props.value;
+      if(props.value){
+        let date = new Date(props.value);
+        if(!isVaildDate(date)){
+          // return <span>数据{props.value}，格式非法</span>;
+          return <strong>日期/时间数据格式非法</strong>
+        }
+        val = moment(date);
       }
-
       if(type === "date"){
         return <DatePicker
           value={val}

@@ -16,11 +16,19 @@ export function createFormHandler(config){
    * }
    */
   var eventCallBacks = {}
+  var formState = {
+    validated: false,
+  }
 
   var initField = function(config) {
     let r = {};
     config.forEach(v => {
-      r = Object.assign(r, {[v.path]: {actions:{}, effects:{}}})
+      r = Object.assign(r, {
+        [v.path]: {
+          actions:{}, 
+          effects:{}
+        }
+      })
     });
     return r;
   }
@@ -28,14 +36,24 @@ export function createFormHandler(config){
 
   var submit = function(){
     let r = {}
+    let validCode = true;
     Object.keys(this).forEach(key => {
       if(this[key].actions){
         if(typeof this[key].actions.getValue === "function"){
           r = Object.assign(r, {[key]: this[key].actions.getValue()});
         }
+        if(typeof this[key].actions.valid === "function"){
+          const result = this[key].actions.valid();
+          if(!result && validCode){
+            validCode = false;
+          }
+        }
       }
     })
-    return r;
+    return {
+      validCode: validCode,
+      data: r
+    };
   }
 
   var subscribe = function(fieldName, eventName, cb){
@@ -56,5 +74,6 @@ export function createFormHandler(config){
   formHandler.submit = submit;
   formHandler.subscribe = subscribe;
   formHandler.dispatch = dispatch;
+  formHandler.formState = formState;
   return formHandler;
 }

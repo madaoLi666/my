@@ -6,15 +6,13 @@ import FormItem from './formItem';
 
 import styles from './index.less';
 
+import {validFun} from './utils/valid';
 
 const defaultGutterConfig = {
   gutter: [0,16], // px
   justify: "left"
 }
 export function renderForm(config:Array<FormConfig> , formHandler:any, gridConfig:any = defaultGutterConfig){
-  
-  
-
   if(!config) throw new Error('config is undefined');
   if(Object.prototype.toString.call(config) !== '[object Array]') throw new Error(`Expect array but ${typeof config}`);
   
@@ -49,6 +47,7 @@ export function renderForm(config:Array<FormConfig> , formHandler:any, gridConfi
           type={config[i].type}
           label={config[i].label}
           componentOption={config[i].componentOption}
+          validate={config[i].componentOption.valid || []}
         />
       </Col>
     )
@@ -75,10 +74,6 @@ export default class MyForm extends Component<MyFormProp, MyFormState>{
       getFormHandler(this.state.formHandler);
     }
   }
-
-  // handleSubmit = () => {
-    
-  // }
 
   render(){
     return(
