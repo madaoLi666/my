@@ -50,10 +50,9 @@ export function createFormHandler(config){
         }
       }
     })
-    return {
-      validCode: validCode,
-      data: r
-    };
+    return new Promise((resolve) => {
+      resolve({validCode: validCode,data: r})
+    })
   }
 
   var subscribe = function(fieldName, eventName, cb){

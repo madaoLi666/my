@@ -16,7 +16,8 @@ export function renderForm(config:Array<FormConfig> , formHandler:any, gridConfi
   if(!config) throw new Error('config is undefined');
   if(Object.prototype.toString.call(config) !== '[object Array]') throw new Error(`Expect array but ${typeof config}`);
   
-  let count = 0;
+  let count = 0;    // 计算占比
+  let prevOffset = 0; // 使用offset换行时，计算第i个元素用于上一行换行的offset数量
   let row = 0;
   let formDom = [];
   let spanArr = [];
@@ -24,7 +25,7 @@ export function renderForm(config:Array<FormConfig> , formHandler:any, gridConfi
     if(config[i].hidden){
       continue;
     }
-    count += config[i].span + (config[i].offset || 0);
+    count += config[i].span + config[i].offset;
     if(count > 24){
       formDom.push(
         <Row 
@@ -35,19 +36,28 @@ export function renderForm(config:Array<FormConfig> , formHandler:any, gridConfi
         </Row>
       )
       spanArr = []; 
-      count = config[i].span + (config[i].offset || 0);
+      // 计算上一行换行的offset数量
+      prevOffset = 24 - count + (config[i].span + config[i].offset);
+      // 减去上一行换行所用offset
+      count = config[i].span + (config[i].offset - prevOffset);
       row += 1;
     }
     spanArr.push(
-      <Col span={config[i].span} offset={config[i].offset} key={`row-${row}|span-${count}`}>
+      <Col 
+        span={config[i].span} 
+        // 同上一条注释
+        offset={spanArr.length === 0 ? config[i].offset - prevOffset : config[i].offset} 
+        key={`row-${row}|span-${count}`}
+      >
         <FormItem 
           actions={formHandler[config[i].path].actions} 
           dispatch={formHandler.dispatch}
           defaultValue={config[i].value}
           type={config[i].type}
           label={config[i].label}
+          unit={config[i].unit}
           componentOption={config[i].componentOption}
-          validate={config[i].componentOption.valid || []}
+          validate={config[i].componentOption.valid || ""}
         />
       </Col>
     )

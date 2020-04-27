@@ -22,7 +22,6 @@ export default class MyInput extends React.Component<MyInputProps,{}>{
   renderInput = () => {
     const { componentOption } = this.props;
     if(componentOption){
-      console.log(componentOption);
       if(componentOption.type === "textarea"){
         return <Input.TextArea value={this.props.value} onChange={this.handleChange}/>
       }else if(componentOption.type === "password"){

@@ -1,4 +1,4 @@
-import React,{ Component} from 'react';
+import React,{ Component, ReactNode} from 'react';
 import { Row, Col} from 'antd';
 import MyComponents from './components/index';
 import { FormItemProp, FormItemState } from './interface';
@@ -29,12 +29,10 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
       }
       props.actions.valid = function(){
         const error = validFun(self.state.value, props.validate||[]);
-        self.setState({error: error})
-        
+        self.setState({error: error});
         return error === "" || JSON.stringify(error) === "{}";
       }
     }
-    // console.log(props);
   }
 
   componentDidMount(){
@@ -60,17 +58,37 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
     });
   }
 
+  renderAsterisk = (validate: string|object|RegExp|null):ReactNode => {
+    const type = Object.prototype.toString.call(validate);
+    let isRender = false;
+    if(type === "[object String]"){
+      isRender = validate === "required";
+    }
+    if(type === "[object Array]"){
+      // ts-ignore
+      for(let i = 0 ; i < (validate as Array<any>).length ; i++){
+        if((validate as Array<any>)[i] === "required" && !isRender){
+          isRender = true;
+        }
+      }
+    }
+    return isRender ? <span style={{color: 'red'}}>*</span>: null
+  }
+
   render(){
-    const { dispatch, type, label, componentOption } = this.props;
-    const { value, error } = this.state;
+    const { dispatch, type, label, componentOption, unit } = this.props;
+    const { value, error, validate } = this.state;
     const MyComponent = MyComponents[type];
     return(
       <Row className={styles['form-item']}>
           {/* default 8:16 */}
           <Col span={8} className={styles['formItem-label']}>
-            <label>{label}:</label>
+            <label>
+              {this.renderAsterisk(validate)}
+              {label}:
+            </label>
           </Col>
-          <Col span={16} className={styles['formItem-main']}>
+          <Col span={14} className={styles['formItem-main']}>
             {MyComponent ? (
               <MyComponent
                 onChange={this.handleChange}
@@ -85,6 +103,7 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
                 </strong>
               )}
           </Col>
+          <Col span={2}>{unit}</Col>
           {/* 基本的组件的error统一在这里做，复杂的放入业务组件中 */}
           {isBase(error) ? (
             <Col offset={8} span={16} className={styles['formItem-error']}>

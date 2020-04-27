@@ -6,9 +6,12 @@ interface rulesModel{
   [key:string]: Array<string|rulesModel>
 }
 
-
+const SPLIT_KEY = "|";
 function isBase(data: any):boolean{
   return typeof data !== "object";
+}
+function isStr(data:any):boolean{
+  return Object.prototype.toString.call(data) === "[object String]";
 }
 
 function isArr(data: any):boolean{
@@ -23,43 +26,59 @@ function isRegExp(data: any):boolean{
 }
 
 const errorText:{[key:string]:string} = {
-  "required": "此输入值不可为空"
+  "required": "此输入值不可为空",
+  "number": "请输入数字"
 }
 
 const validateRules: ValidateRule = {
-  "required":function(val:any){
+  "required":function(val:any):boolean{
     return !!val;
+  },
+  "number":function(val:any):boolean{
+    return /^[0-9]+$/.test(val);
   }
 }
 
 /**
  * 
- * @param data 
- * @param rules
- * 1.规则以 数组 的形式送入此函数，数组每项元素为并行校验
- * 2.规则以 字符串|对象 形式送入函数
+ * @param {any} data 
+ * @param {string|object|RegExp|null} rules
+ * 输入规则
+ * 1.基本数据类型校验rules格式 string
+ * 2.引用数据类型校验rules格式 {}
+ * 3.若输入的rule类型和data类型不相同，报错但可通过校验
+ * TODO
+ * 暂时写any 以后改类型
  */
 
 export const validFun = function(data:any, rules:any):any{
   if(!rules) return "";
-  if(isArr(rules)){
-    // 数组
-    let r = {};
-    for(const item of rules){
-      r = Object.assign(r, validFun(data, item));
+  let errorTip:any = "";
+  // data 为 null时，typeof为object
+  if(isStr(rules) && (isBase(data) || !data)){
+    let ruleArr = rules.split(SPLIT_KEY);
+    let isValid = true;
+    for(let i = 0 ; i < ruleArr.length ; i++){
+      isValid = validateRules[ruleArr[i]](data);
+      if(!isValid){
+        errorTip = errorText[ruleArr[i]];
+        break;
+      }
     }
-    return r;
-  }else if(isObj(rules)){
-    // 对象
-    let r = {};
-    for(const key in rules){
-      r = Object.assign(r, {[key]: validFun(data[key], rules[key])});
+  }else if(isObj(rules) && !isBase(data)){
+    errorTip = Object.assign({}, rules);
+    try{
+      Object.keys(rules).forEach((key:string) => {
+        errorTip[key] = "";
+        errorTip[key] = validFun(data[key], rules[key]);
+      });
+    }catch(e){
+      console.error(e);
     }
-    return r;
-  }
-  if(isRegExp(rules)){
-    return rules.test(data) ? "" : "正则验证不通过";
+  }else if(isRegExp(rules) && (!isBase(data) || !data)){
+    errorTip = rules.test(data) ? "" : `正则验证 ${rules} 不通过`;
   }else{
-    return validateRules[rules](data) ? "" : errorText[rules];
+    console.error(`Type of rules is ${typeof rules}, but type of data is ${typeof data} `);
   }
+  return errorTip;
 }

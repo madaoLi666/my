@@ -3,7 +3,7 @@ import {Input} from 'antd'
 import MyForm from './MyForm/index';
 import config from './localdata/config';
 import data from './localdata/data';
-import { getRenderData } from './MyForm/utils';
+import { getRenderData, toFormat } from './MyForm/utils';
 
 import './Home.css';
 
@@ -25,8 +25,12 @@ export default class Home extends React.Component<{},HomeState>{
   }
 
   handleSubmit = () => {
-    const res = this.state.formHandler.submit();
-    console.log(res);
+    this.state.formHandler.submit().then(({validCode, data}:any) => {
+      if(validCode){
+        console.log(data);
+        console.log(toFormat(data));
+      }
+    });
   }
 
   render(){

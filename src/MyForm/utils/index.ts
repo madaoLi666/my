@@ -3,6 +3,7 @@ import {FormConfig} from '../interface';
 const o:string = ".";
 const a:string = "_";
 const ALL:string = "*";
+// 只提取基本数据类型
 const ONLYBASE:boolean = false;
 
 function isBase(data: any):boolean{
@@ -49,6 +50,7 @@ const rules = [
   {
     match: (oi:number, ai:number) =>  (oi === ai),
     action:function(oi:number, ai:number, path:string, obj:any, history:string){
+      // 只提取基本数据类型
       // if(isBase(obj) === ONLYBASE) return {};
       let r:{[key:string]:any} = {};
       if(path === ALL){
@@ -184,14 +186,57 @@ function newObj(parentKey:string, currentKey:string, data:any){
       let g:{[key:string]:any} = {};
       g[parentKey] = [];
       g[parentKey][Number(currentKey)] = data;
-      r = Object.assign(r, toFormat(g));
+      r = _assign(r, toFormat(g));
     }else{
       let g:{[key:string]:any} = {};
-      g[currentKey] = data;
-      r = Object.assign(r, toFormat(g));
+      g[parentKey] = {};
+      g[parentKey][currentKey] = data;
+      r = _assign(r, toFormat(g));
     }
   }
   return r;
+}
+
+/**
+ * 因为转换出来的对象名称相同，直接使用Object.assign会导致覆盖
+ * 所有需要此方法做合并处理（正常情况下是不会去重的，除非在转换的时候已经出现了重复）
+ * 合并两个对象
+ */
+function _assign(mainData: any, newData: any ): any{
+  
+  if(isObj(mainData) && isObj(newData)){
+    const mainKey = Object.keys(mainData);
+    const newKey = Object.keys(newData);
+    for(let i = 0 ; i < newKey.length ; i++){
+      let flag = false;
+      for(let j = 0; j < mainKey.length ; j++){
+        const mk = mainKey[j];
+        const nk = newKey[i];
+        if(mk === nk){
+          flag = true;
+          // 判别下一层是不是数组，数组需要特殊处理 - 这个方法应该不会常用
+          if(isArr(mainData[mk]) && isArr(newData[nk])){
+            mainData[mk] = mainData[mk].filter((v:any) => !!v).concat(newData[nk].filter((v:any) => !!v));
+          }else{
+            // default object
+            mainData[mk] = {
+              ...mainData[mk],
+              ...newData[nk]
+            }
+          }
+        }
+      }
+      if(!flag){
+        mainData = {
+          ...mainData,
+          [newKey[i]]: newData[newKey[i]]
+        }
+      }
+    }
+  }else{
+    console.error("其中一个参数不是对象");
+  }
+  return mainData;
 }
 
 /**
@@ -205,25 +250,26 @@ export function toFormat(data:{[key:string]:any}):object{
     let ai = key.lastIndexOf(a);
     if(oi === ai){
       console.warn('isolated data');
-      r = Object.assign(r, newObj("", key, data[key]));
+      r = _assign(r, newObj("", key, data[key]));
     }else if(oi === -1){
       const currentKey = key.substring(ai+1, key.length);
       const parentKey = key.substring(0, ai);
-      r = Object.assign(r, newObj(parentKey, currentKey,data[key]));
+      r = _assign(r, newObj(parentKey, currentKey,data[key]));
     }else if(ai === -1){
       const currentKey = key.substring(oi+1, key.length);
       const parentKey = key.substring(0, oi);
-      r = Object.assign(r, newObj(parentKey, currentKey, data[key]));
+      r = _assign(r, newObj(parentKey, currentKey, data[key]));
     }else if(oi < ai){
       // 变成数组
       const currentKey = key.substring(ai+1, key.length);
       const parentKey = key.substring(0, ai);
-      r = Object.assign(r, newObj(parentKey, currentKey, data[key]));
+      r = _assign(r, newObj(parentKey, currentKey, data[key]));
     }else if(oi > ai){
-      const currentKey = key.substring(oi, key.length);
+      const currentKey = key.substring(oi+1, key.length);
       const parentKey = key.substring(0, oi);
-      r = Object.assign(r, newObj(parentKey, currentKey, data[key]));
+      r = _assign(r, newObj(parentKey, currentKey, data[key]));
     }
   })
   return r;
 }
+
