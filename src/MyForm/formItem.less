@@ -1,4 +1,7 @@
 @import './index.less';
+@formItemLabelWidth: 120px;
+@formItemUnitWidth: 60px;
+
 .form-item{
   display: flex;
   flex-direction: row;
@@ -8,8 +11,10 @@
   
   .formItem-label {
     height: @normalInputHeight;
-    display: flex;
-    flex-direction: row-reverse;
+    text-align: right;
+    // display: flex;
+    // flex-direction: row-reverse;
+    width: @formItemLabelWidth;
     > label {
       padding-right: @labelPaddingRight;
       height: @normalInputHeight;
@@ -21,6 +26,8 @@
   }
 
   .formItem-main {
+    width: calc(100% - @formItemLabelWidth - @formItemUnitWidth);
+    // margin: 0 auto;
     > span {
       height: @normalInputHeight;
       line-height: @normalInputHeight;
@@ -28,9 +35,24 @@
     // TODO
     // 考虑加入一个错误样式用于报渲染的错误
   }
-
-  .formItem-error{
+  
+  .formItem-unit{
+    padding-left: 5px;
+    width: @formItemUnitWidth;
     text-align: left;
-    color: red;
   }
+
+  
+}
+.formItem-error{
+
+  margin-left: @formItemLabelWidth;
+  // 减去label和unit的值
+  width: calc( 100% - @formItemLabelWidth);
+  text-align: left;
+  color: red;
+}
+
+.business-component{
+  width: 100%;
 }

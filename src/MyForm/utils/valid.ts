@@ -2,10 +2,6 @@ interface ValidateRule{
   [key:string]: (val: any) => boolean
 }
 
-interface rulesModel{
-  [key:string]: Array<string|rulesModel>
-}
-
 const SPLIT_KEY = "|";
 function isBase(data: any):boolean{
   return typeof data !== "object";
@@ -65,7 +61,7 @@ export const validFun = function(data:any, rules:any):any{
         break;
       }
     }
-  }else if(isObj(rules) && !isBase(data)){
+  }else if(isObj(rules) && isObj(data)){
     errorTip = Object.assign({}, rules);
     try{
       Object.keys(rules).forEach((key:string) => {
@@ -77,6 +73,17 @@ export const validFun = function(data:any, rules:any):any{
     }
   }else if(isRegExp(rules) && (!isBase(data) || !data)){
     errorTip = rules.test(data) ? "" : `正则验证 ${rules} 不通过`;
+  }else if(isObj(rules) && isArr(data)){
+    errorTip = data.map((v:any) => {
+      let obj = Object.assign({},v);
+      Object.keys(obj).forEach((key: string) => {
+        obj[key] = "";
+      });
+      return obj;
+    });
+    for(let i = 0 ; i < errorTip.length ;i++){
+      errorTip[i] = validFun(data[i], rules);
+    }
   }else{
     console.error(`Type of rules is ${typeof rules}, but type of data is ${typeof data} `);
   }

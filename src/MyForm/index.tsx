@@ -12,6 +12,7 @@ const defaultGutterConfig = {
   gutter: [0,16], // px
   justify: "left"
 }
+// TODO 后期应该考虑把这里的col和row换成自定义的样式实现
 export function renderForm(config:Array<FormConfig> , formHandler:any, gridConfig:any = defaultGutterConfig){
   if(!config) throw new Error('config is undefined');
   if(Object.prototype.toString.call(config) !== '[object Array]') throw new Error(`Expect array but ${typeof config}`);
@@ -26,11 +27,12 @@ export function renderForm(config:Array<FormConfig> , formHandler:any, gridConfi
       continue;
     }
     count += config[i].span + config[i].offset;
+    // console.log(count);
     if(count > 24){
       formDom.push(
         <Row 
-          key={`row-${row}`} 
-          {...gridConfig}
+        key={`row-${row}`} 
+        {...gridConfig}
         >
             {spanArr}
         </Row>

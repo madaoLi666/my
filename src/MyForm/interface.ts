@@ -2,7 +2,7 @@ export interface ComponentOption{
   type: string|null, // 单一组件多重展开
   valid: string|object|RegExp|null,
   // select
-  selectOption?: Array<{value:string, label:string}>|null,
+  selectOptions?: Array<{value:string|number, label:string|number}>|null,
   // date
   format?: string
 }

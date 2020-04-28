@@ -28,7 +28,7 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
         self.setState({value: val});
       }
       props.actions.valid = function(){
-        const error = validFun(self.state.value, props.validate||[]);
+        const error = validFun(self.state.value, props.validate||{});
         self.setState({error: error});
         return error === "" || JSON.stringify(error) === "{}";
       }
@@ -43,34 +43,26 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
   }
 
   handleChange = (val:any) => {
-    console.log(val);
+    // console.log(val);
     this.setState({value: val},() => {
       if(this.props.actions.setValue){
         this.props.actions.setValue(this.state.value);
       }else{
         console.error('缺失setValue Function');
       }
-      if(this.props.actions.valid){
+      // TODO 这个位置先将object/array的valid不在handlechange时触发，以后可以加入trigger去做响应
+      if(this.props.actions.valid && typeof val !== "object"){
         this.props.actions.valid();
       }else{
-        console.error('缺失valid Function');
+        console.error('缺失valid Function || 校验对象为object/Array');
       }
     });
   }
 
   renderAsterisk = (validate: string|object|RegExp|null):ReactNode => {
-    const type = Object.prototype.toString.call(validate);
     let isRender = false;
-    if(type === "[object String]"){
-      isRender = validate === "required";
-    }
-    if(type === "[object Array]"){
-      // ts-ignore
-      for(let i = 0 ; i < (validate as Array<any>).length ; i++){
-        if((validate as Array<any>)[i] === "required" && !isRender){
-          isRender = true;
-        }
-      }
+    if(Object.prototype.toString.call(validate) === "[object String]"){
+      isRender =  (validate as string).indexOf("required") !== -1;
     }
     return isRender ? <span style={{color: 'red'}}>*</span>: null
   }
@@ -80,15 +72,54 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
     const { value, error, validate } = this.state;
     const MyComponent = MyComponents[type];
     return(
-      <Row className={styles['form-item']}>
-          {/* default 8:16 */}
-          <Col span={8} className={styles['formItem-label']}>
+      // <Row className={styles['form-item']}>
+      //     {/* default 8:16 
+      //       * TODO 
+      //       * config by user
+      //       * make a function to calc it
+      //       * 现在为了布局的简便，先将label和unit固定下来
+      //       */}
+      //     <Col span={8} className={styles['formItem-label']}>
+      //       <label>
+      //         {this.renderAsterisk(validate)}
+      //         {label}:
+      //       </label>
+      //     </Col>
+      //     <Col span={14} className={styles['formItem-main']}>
+      //       {MyComponent ? (
+      //         <MyComponent
+      //           onChange={this.handleChange}
+      //           dispatch={dispatch}
+      //           value={value}
+      //           componentOption={componentOption}
+      //           error={error}
+      //         />
+      //         ) : (
+      //           <strong>
+      //             组件{type}不存在
+      //           </strong>
+      //         )}
+      //     </Col>
+      //     <Col span={2}>{unit}</Col>
+      //     {/* 基本的组件的error统一在这里做，复杂的放入业务组件中 */}
+      //     {isBase(error) ? (
+      //       <Col offset={8} span={16} className={styles['formItem-error']}>
+      //         {error}
+      //       </Col>
+      //     ) : null}
+      //   </Row>
+      <div>
+        {/* 业务组件与通用组件样式区别 */}
+        <div className={type.indexOf('b-') === -1 ? styles['form-item'] : styles['business-component']}>
+          { label !== "" ? (
+            <div className={styles['formItem-label']}>
             <label>
               {this.renderAsterisk(validate)}
               {label}:
             </label>
-          </Col>
-          <Col span={14} className={styles['formItem-main']}>
+            </div>
+          ) :null}
+          <div className={styles['formItem-main']}>
             {MyComponent ? (
               <MyComponent
                 onChange={this.handleChange}
@@ -102,15 +133,20 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
                   组件{type}不存在
                 </strong>
               )}
-          </Col>
-          <Col span={2}>{unit}</Col>
-          {/* 基本的组件的error统一在这里做，复杂的放入业务组件中 */}
-          {isBase(error) ? (
-            <Col offset={8} span={16} className={styles['formItem-error']}>
+          </div>
+          {unit !== "" ? (
+            <div className={styles['formItem-unit']}>
+              {unit}
+            </div>
+          ):null}
+        </div>
+        {/* 基本的组件的error统一在这里做，复杂的放入业务组件中 */}
+        {isBase(error) ? (
+            <div className={styles['formItem-error']}>
               {error}
-            </Col>
+            </div>
           ) : null}
-        </Row>
+      </div>
     )
   }
 }

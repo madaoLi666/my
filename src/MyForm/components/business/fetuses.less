@@ -1,0 +1,72 @@
+@import '../../formItem.less';
+
+.fetus{
+  width: 100%;
+  .title{
+    position: relative;
+    height: @normalInputHeight/2;
+    border-bottom: 1px solid #000000;
+    margin-bottom: @normalInputHeight/2;
+    > span {
+      font-size: large;
+      font-weight: 600;
+      position: absolute;
+      left: 5%;
+      padding: 0 4px;
+      background-color: #ffffff;
+      // top: @normalInputHeight/4;
+    }
+  }
+
+  .handle{
+    height: @normalInputHeight;
+    margin: @normalInputHeight/2 0;
+    > * {
+      margin-left: 90%;
+    }
+  }
+}
+
+
+.fetus-form{
+  width: 100%;
+  font-size: @normalFontSize;
+  color: rgba(0,0,0,.85);
+  margin: @normalInputHeight/2 0;
+
+  .fetus-form-item {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+    > div {
+      display: flex;
+      flex-direction: row;
+    }
+    .label{
+      height: @normalInputHeight;
+      text-align: right;
+      // display: flex;
+      // flex-direction: row-reverse;
+      width: @formItemLabelWidth;
+      > label {
+        padding-right: @labelPaddingRight;
+        height: @normalInputHeight;
+        line-height: @normalInputHeight;
+        color: rgba(0,0,0,.85);
+        font-size: @normalFontSize;
+        text-align: right;
+      }
+    }
+    
+    .main {
+      width: calc(100% - 120px - 60px);
+      height: @normalInputHeight;
+      line-height: @normalInputHeight;
+    }
+    .error {
+      color: red;
+      margin-left: 120px;
+      width: calc(100% - 120px - 60px);
+    }
+  }
+}
