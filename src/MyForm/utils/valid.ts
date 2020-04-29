@@ -84,6 +84,7 @@ export const validFun = function(data:any, rules:any):any{
     for(let i = 0 ; i < errorTip.length ;i++){
       errorTip[i] = validFun(data[i], rules);
     }
+    console.log(errorTip);
   }else{
     console.error(`Type of rules is ${typeof rules}, but type of data is ${typeof data} `);
   }

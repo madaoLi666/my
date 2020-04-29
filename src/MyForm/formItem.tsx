@@ -28,7 +28,7 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
         self.setState({value: val});
       }
       props.actions.valid = function(){
-        const error = validFun(self.state.value, props.validate||{});
+        const error = validFun(self.state.value, props.validate || "");
         self.setState({error: error});
         return error === "" || JSON.stringify(error) === "{}";
       }
@@ -43,18 +43,20 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
   }
 
   handleChange = (val:any) => {
-    // console.log(val);
     this.setState({value: val},() => {
-      if(this.props.actions.setValue){
-        this.props.actions.setValue(this.state.value);
-      }else{
-        console.error('缺失setValue Function');
-      }
-      // TODO 这个位置先将object/array的valid不在handlechange时触发，以后可以加入trigger去做响应
-      if(this.props.actions.valid && typeof val !== "object"){
-        this.props.actions.valid();
-      }else{
-        console.error('缺失valid Function || 校验对象为object/Array');
+      console.log(val);
+      if(this.props.actions){
+        if(this.props.actions.setValue){
+          this.props.actions.setValue(this.state.value);
+        }else{
+          console.error('缺失setValue Function');
+        }
+        // TODO 这个位置先将object/array的valid不在handlechange时触发，以后可以加入trigger去做响应
+        if(this.props.actions.valid && typeof val !== "object"){
+          this.props.actions.valid();
+        }else{
+          console.error('缺失valid Function || 校验对象为object/Array');
+        }
       }
     });
   }

@@ -24,13 +24,19 @@ export default class Home extends React.Component<{},HomeState>{
     }
   }
 
+
+  componentDidUpdate(){
+    // if(this.state.formHandler.sub)
+  }
+
+
   handleSubmit = () => {
     this.state.formHandler.submit().then(({validCode, data}:any) => {
       
-      if(validCode){
-        console.log(data);
-        console.log(toFormat(data));
-      }
+      console.log(data);
+      console.log(toFormat(data));
+      // if(!validCode){
+      // }
     });
   }
 

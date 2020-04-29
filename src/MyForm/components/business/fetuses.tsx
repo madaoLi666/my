@@ -133,7 +133,8 @@ export default class BusinessFetuses extends Component<BusinessFetusesPorps, Bus
     value.push(newData);
     this.setState({value},() => {
       this.props.onChange(value);
-    })
+    });
+    this.props.dispatch('jd','djfid','')
   }
 
   handleClose = (id:number|string):void => {

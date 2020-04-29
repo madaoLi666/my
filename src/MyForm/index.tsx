@@ -59,7 +59,7 @@ export function renderForm(config:Array<FormConfig> , formHandler:any, gridConfi
           label={config[i].label}
           unit={config[i].unit}
           componentOption={config[i].componentOption}
-          validate={config[i].componentOption.valid || ""}
+          validate={config[i].valid || ""}
         />
       </Col>
     )

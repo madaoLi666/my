@@ -5,7 +5,7 @@ import { Input} from 'antd';
 
 interface MyInputProps{
   onChange: Function,
-  dispatch: Function,
+  dispatch?: Function,
   value: any,
   componentOption: any
 }
