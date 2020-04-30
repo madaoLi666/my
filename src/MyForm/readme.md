@@ -33,7 +33,7 @@
 |radio|checkbox是否为单选，在multiple下可设置为false|boolean|默认为true|
 |extraEditors|在选中某个选项后弹出的输入框|ExtraEditor extends FormConfig|仅添加了index字段，保存规则未写|
 |checkbox|
-|type|提供default,whether,multiple,custom四个形式|string||
+|type|提供default,whether,multiple三个形式，multiple基本满足大部分业务场景|string||
 |renderData|除default外，组件会根据renderData的字段自动提取对象的值。例如：['a'],组件会自动取出对象下a与aNote的值|Array<string|{key:string,label:string}>||
 |extraEditors|额外渲染的输入器|Array<ExtraEditors>||
 |续待未完|

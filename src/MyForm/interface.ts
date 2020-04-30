@@ -6,14 +6,26 @@ interface ExtraEditors {
 export interface ComponentOption {
   type: string | null, // 单一组件多重展开
   // valid: string|object|RegExp|null,
+  
   // select
   selectOptions?: Array<{ value: string | number, label: string | number }> | null,
+  
   // date
   format?: string,
+  
   // checkbox
   radio?: boolean,
   extraEditors?: Array<ExtraEditors>,
+  // 这个属性有可能适用于其他组件
   renderData?: Array<string>|Array<{key:string,label: string}>
+  
+  // table
+  editable?: boolean, // 自动提供button和编辑功能
+  tableColumns?: Array<{
+    key: string,
+    title: string,
+    editor?: FormConfig      // 对自带的组件库索引
+  }> 
 }
 
 export interface FormConfig {
