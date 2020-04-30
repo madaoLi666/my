@@ -208,6 +208,35 @@ const config: Array<FormConfig> = [
         }
       ]
     }
+  },
+  {
+    path: ".fetuses", label: "胎儿检查table", unit: "", type: "table", span: 24, offset: 0, valid: "",
+    componentOption: {
+      type: "default",
+      editable: true,
+      tableColumns: [
+        {
+          key: "id",
+          title: "id",
+          editor: {
+            path: "",
+            label: "",
+            unit: "",
+            type: "input",
+            span: 0,
+            offset: 0,
+            valid: "",
+            componentOption: {
+              type: "default",
+            },
+          }
+        },
+        {key: "fetalPosition", title: "胎儿位置"},
+        {key: "fetalHeartRate", title: "胎儿心率"},
+        {key: "fetalMovement", title: "胎动"},
+        {key: "weight", title: "胎儿重量"},
+      ]
+    }
   }
 ]
 export default config;
