@@ -1,7 +1,7 @@
 ## 自动化生成表单思路
     该工具将整个表单配置分为3个层级，分别为form，render，foremItem。再加上书写业务的page，共4个层级。
-    1.form 用于初始化formHandler
-    2.render 根据配置布局渲染formItem
+    1.form 用于初始化formHandler（初始化逻辑写在MyForm/form.js）
+    2.render 根据配置布局渲染formItem 
     3.formItem，用于渲染编辑器以及业务组件  
     
 
