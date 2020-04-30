@@ -45,6 +45,9 @@
 |key|对应需要额外渲染的checkbox的value值，仅在custom模式下起作用|any||
 |editors|渲染的输入器的类型与样式等描述|Array<FormConfig>|可以完全按照FormConfig类型适配；但需注意的是，在此渲染的输入器不经过formItem，即仅调用MyComponent方法，所以不要对其使用formHandler中的方法|
 
+> 关于多个编辑器的保存格式：
+> 若有2个编辑器，则数据会以{"0":"", "1":""}这样的形式输出到keyNote上
+
 - 例1-1
 ```
 const data = { // 需要验证的数据
@@ -82,7 +85,7 @@ const valid = {
 
 ## 组件书写格式
 
-- props
+- props（输入）
 
 |name|description|format|ps|
 |-----|-----|-----|-----|

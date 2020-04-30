@@ -16,4 +16,4 @@
 node_modules
 
 # local Test Data #
-src/localdata/*
+# src/localdata/*
