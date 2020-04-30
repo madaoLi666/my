@@ -1,8 +1,9 @@
 import React, { Component, ReactNode } from 'react';
 import { Checkbox, Col, Row } from 'antd';
-import { ProgressPlugin } from 'webpack';
+import CheckboxWithExtra from './CheckboxWithExtra';
 import MyComponent from '../components/index';
 
+// TODO 4/30 今天！！！ 要重构一下
 // TODO 这里的验证需要寻找其他办法
 // TODO 这里之后应该要改为有custom渲染完所有的，使用其他三个type时都经过custom的方法去完成
 interface MyCheckboxProps {
@@ -23,7 +24,7 @@ interface CheckboxComponentProps {
   type: string,
   radio?: boolean
   extraEditors: any,
-  renderData: Array<string>
+  renderData: Array<{ key: string, label: string }>
 }
 
 
@@ -38,10 +39,6 @@ interface CheckboxComponentProps {
  * {"0":"","1":""} 方式保存
  */
 
-const whetherConfig = [
-  { label: "有", value: true },
-  { label: "无", value: false }
-]
 
 export default class MyCheckbox extends Component<MyCheckboxProps, any> {
   constructor(props: MyCheckboxProps) {
@@ -60,13 +57,13 @@ export default class MyCheckbox extends Component<MyCheckboxProps, any> {
     },
     "whether": function (componentOption: CheckboxComponentProps, value: any, onChange: Function): ReactNode {
       const { extraEditors } = componentOption;
-      let checkboxValue = value[componentOption.renderData[0]];
-      let editorsValue = value[`${componentOption.renderData[0]}Note`];
+      let checkboxValue = value[componentOption.renderData[0].key];
+      let editorsValue = value[`${componentOption.renderData[0].key}Note`];
       // 转了格式，在这个位置转回来
-      const handleChange = function(value:{checkboxValue:boolean, editorsValue:string}) {
+      const handleChange = function (value: { checkboxValue: boolean, editorsValue: string }) {
         onChange({
-          [componentOption.renderData[0]]: value.checkboxValue,
-          [`${componentOption.renderData[0]}Note`]: value.editorsValue
+          [componentOption.renderData[0].key]: value.checkboxValue,
+          [`${componentOption.renderData[0].key}Note`]: value.editorsValue
         })
       }
       return <WhetherCheckbox
@@ -75,8 +72,26 @@ export default class MyCheckbox extends Component<MyCheckboxProps, any> {
         extraEditors={extraEditors}
       />;
     },
-    "multiple": function(componentOption: CheckboxComponentProps, value: any, onChange: Function): ReactNode {
-      return <div>a</div>
+    "multiple": function (componentOption: CheckboxComponentProps, value: any, onChange: Function): ReactNode {
+      const r = componentOption.renderData.map((v: any) => ({
+        checkboxValue: value[v.key],
+        editorsValue: value[`${v.key}Note`],
+        key: v.key,
+        label: v.label
+      }));
+      const handleChange = function (val: any, key: string) {
+        let newObj = {
+          [key]: val.checkboxValue,
+          [key + 'Note']: val.editorsValue
+        };
+        onChange(Object.assign(value, newObj));
+      }
+      return <MultipleCheckbox
+        value={r}
+        onChange={handleChange}
+        radio={componentOption.radio || true}
+        extraEditors={componentOption.extraEditors}
+      />
     }
   }
 
@@ -105,12 +120,12 @@ class WhetherCheckbox extends Component<WhetherCheckboxProps>{
   // 0 - 无  1 - 有
   handleChange = (e: any, type: number) => {
     const { onChange } = this.props;
-    if(type === 0){
+    if (type === 0) {
       onChange({
         checkboxValue: !e.target.checked,
         editorsValue: null
       });
-    }else if(type === 1){
+    } else if (type === 1) {
       // CheckboxWithExtra 这个组件传出的就是 {checkboxValue, editorsValue} 形式
       onChange(e);
     }
@@ -123,7 +138,7 @@ class WhetherCheckbox extends Component<WhetherCheckboxProps>{
           editors={extraEditors[0].editors}
           checkboxValue={value.checkboxValue}
           editorsValue={value.editorsValue}
-          onChange={(val:any) => this.handleChange(val, 1)}
+          onChange={(val: any) => this.handleChange(val, 1)}
         >有</CheckboxWithExtra>
         <Checkbox
           checked={!value.checkboxValue}
@@ -137,65 +152,76 @@ class WhetherCheckbox extends Component<WhetherCheckboxProps>{
 }
 
 
-
-// 附带输入框的checkbox
-interface CheckboxWithExtraProps {
-  editors: Array<any>,
-  checkboxValue: boolean,
-  editorsValue: string,
+interface MultipleCheckboxProps {
+  extraEditors: Array<any>,
+  radio: boolean,
+  value: Array<any>
   onChange: Function
 }
 
-class CheckboxWithExtra extends Component<CheckboxWithExtraProps>{
-  // index 这个参数仅在extraEditor时使用
-  handleChange = (value: any, name: string, index:number) => {
-    const { checkboxValue, editorsValue, onChange } = this.props;
-    if(name === "checkboxValue"){
-      onChange({
-        checkboxValue: value,
-        editorsValue
-      });
-    }else if(name === "editorValue"){
-      let newEditorsValue = Object.assign(JSON.parse(editorsValue) || {}, {[index]: value});
-      onChange({
-        checkboxValue,
-        editorsValue: JSON.stringify(newEditorsValue)
+class MultipleCheckbox extends Component<MultipleCheckboxProps>{
+
+
+  handleChange = (val: any, key: string) => {
+    const { radio, value, onChange } = this.props;
+    // 互斥逻辑
+    if (radio) {
+      value.forEach((v:any) => {
+        if(v.key === key){
+          onChange({
+            checkboxValue: val.checkboxValue,
+            editorsValue: val.editorsValue,
+          },key)
+        }else{
+          onChange({
+            checkboxValue: false,
+            editorsValue: "",
+          },v.key)
+        }
       })
+    } else {
+      onChange(val, key)
     }
   }
-  renderExtra = (editorValue: string) => {
-    const { editors } = this.props;
-    if(!editors || editors.length === 0) return null;
-    let newEditorValue:any = {}
-    if(editorValue){
-      newEditorValue = JSON.parse(editorValue);
+
+  renderCheckbox = () => {
+    const { value, extraEditors, onChange } = this.props;
+    let renderDOM: Array<ReactNode> = [];
+    for (let i = 0; i < value.length; i++) {
+      for (let j = 0; j < extraEditors.length; j++) {
+        if (value[i].key === extraEditors[j].key) {
+          renderDOM.push(
+            <CheckboxWithExtra
+              key={`${i}-${j}`}
+              onChange={(val: any) => this.handleChange(val, value[i].key)}
+              checkboxValue={value[i].checkboxValue}
+              editorsValue={value[i].editorsValue}
+              editors={extraEditors[j].editors}
+            >
+              {value[i].label}
+            </CheckboxWithExtra>
+          )
+          break;
+        }
+        if (j === extraEditors.length - 1) {
+          renderDOM.push(
+            <Checkbox
+              key={`${i}-${j}`}
+              onChange={(e) => this.handleChange({ checkboxValue: e.target.checked }, value[i].key)}
+              checked={value[i].checkboxValue}
+            >
+              {value[i].label}
+            </Checkbox>
+          )
+        }
+      }
     }
-    return editors.map((v: any, index: number) => {
-      const RenderComponent = MyComponent[v['type']];
-      return (
-        <div key={index}>
-          <label>{v.label}</label>
-          <RenderComponent
-            value={newEditorValue[index]}
-            {...v}
-            onChange={(value:any) => this.handleChange(value, "editorValue", index)}
-          />
-          <span>{v.unit}</span>
-        </div>
-      )
-    })
+    return renderDOM;
   }
 
   render() {
-    const { checkboxValue, editorsValue } = this.props;
-    return (
-      <div>
-        <Checkbox
-          checked={checkboxValue}
-          onChange={(e) => this.handleChange(e.target.checked, "checkboxValue", -1)}
-        >{this.props.children}</Checkbox>
-        {checkboxValue ? this.renderExtra(editorsValue) : null}
-      </div>
-    )
+    return <div>
+      {this.renderCheckbox()}
+    </div>
   }
-} 
+}
