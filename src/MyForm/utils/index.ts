@@ -158,9 +158,9 @@ export function getRenderData(config:Array<FormConfig>, data:any): Array<FormCon
     return config;
   }
   let rConfig:Array<FormConfig> = config.map(v => v);
-  let cData:{[key:string]:any} = loopPath(data, config.map(v => v.path));
+  let cData:{[key:string]:any} = loopPath(data, config.map(v => v.key));
   for(let i = 0 ; i < rConfig.length ; i++){
-    rConfig[i].value = cData[rConfig[i].path];
+    rConfig[i].value = cData[rConfig[i].key];
   }
   return rConfig;
 }

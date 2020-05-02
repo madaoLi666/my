@@ -1,10 +1,10 @@
 import { FormConfig } from '../MyForm/interface';
 
 const template = {
-  path: '.lmp', label: "lmp", unit: "", type: "", span: 7, offset: 1,
-  componentOption: {
-    type: "date",
-    valid: "required",
+  key: '.lmp', label: "lmp", unit: "", input_type: "", span: 7, offset: 1,
+  input_props: {
+    input_type: "date",
+    rules: "required",
     format: "YYYY-MM-DD"
   }
 }
@@ -12,28 +12,28 @@ const template = {
 
 const config: Array<FormConfig> = [
   {
-    path: '.chief complaint', label: "主诊", unit: "", type: "input", span: 7, offset: 1, valid: "required",
-    componentOption: {
+    key: '.chief complaint', label: "主诊", unit: "", input_type: "input", span: 7, offset: 1, rules: "required",
+    input_props: {
       type: "textarea",
     }
   },
   {
-    path: '.lmp', label: "末次月经", unit: "", type: 'date', span: 7, offset: 17, valid: "required",
-    componentOption: {
+    key: '.lmp', label: "末次月经", unit: "", input_type: 'date', span: 7, offset: 17, rules: "required",
+    input_props: {
       type: "date",
       format: "YYYY-MM-DD"
     }
   },
   {
-    path: '.edd', label: "预产期", unit: "", type: "date", span: 7, offset: 1, valid: "required",
-    componentOption: {
+    key: '.edd', label: "预产期", unit: "", input_type: "date", span: 7, offset: 1, rules: "required",
+    input_props: {
       type: "date",
       format: "YYYY-MM-DD"
     }
   },
   {
-    path: '.gravidity', label: "G", unit: "", type: "select", span: 7, offset: 1, valid: "required|number",
-    componentOption: {
+    key: '.gravidity', label: "G", unit: "", input_type: "select", span: 7, offset: 1, rules: "required|number",
+    input_props: {
       type: "default",
       selectOptions: [
         { value: 1, label: 1 },
@@ -49,8 +49,8 @@ const config: Array<FormConfig> = [
     }
   },
   {
-    path: '.parity', label: "P", unit: "", type: "select", span: 7, offset: 1, valid: "required|number",
-    componentOption: {
+    key: '.parity', label: "P", unit: "", input_type: "select", span: 7, offset: 1, rules: "required|number",
+    input_props: {
       type: "default",
       selectOptions: [
         { value: 1, label: 1 },
@@ -66,50 +66,50 @@ const config: Array<FormConfig> = [
     }
   },
   {
-    path: '.physicalExam.id', label: "体检id", unit: "", type: 'text', span: 7, offset: 1, hidden: true, valid: "required|number",
-    componentOption: {
+    key: '.physicalExam.id', label: "体检id", unit: "", input_type: 'text', span: 7, offset: 1, hidden: true, rules: "required|number",
+    input_props: {
       type: "default",
     }
   },
   {
-    path: '.physicalExam.weight', label: "体重", unit: "kg", type: 'input', span: 7, offset: 1, valid: "required|number",
-    componentOption: {
+    key: '.physicalExam.weight', label: "体重", unit: "kg", input_type: 'input', span: 7, offset: 1, rules: "required|number",
+    input_props: {
       type: "default",
     }
   },
   {
-    path: '.physicalExam.height', label: "身高", unit: "cm", type: 'input', span: 7, offset: 1, valid: "required|number",
-    componentOption: {
+    key: '.physicalExam.height', label: "身高", unit: "cm", input_type: 'input', span: 7, offset: 1, rules: "required|number",
+    input_props: {
       type: "default",
     }
   },
   {
-    path: '.physicalExam.systolic', label: "收缩压", unit: "mmHg", type: 'input', span: 7, offset: 1, valid: "required|number",
-    componentOption: {
+    key: '.physicalExam.systolic', label: "收缩压", unit: "mmHg", input_type: 'input', span: 7, offset: 1, rules: "required|number",
+    input_props: {
       type: "default",
     }
   },
   {
-    path: '.physicalExam.diastolic', label: "舒张压", unit: "mmHg", type: 'input', span: 7, offset: 1, valid: "required|number",
-    componentOption: {
+    key: '.physicalExam.diastolic', label: "舒张压", unit: "mmHg", input_type: 'input', span: 7, offset: 1, rules: "required|number",
+    input_props: {
       type: "default",
     }
   },
   {
-    path: '.physicalExam.pulse', label: "脉率", unit: "次/min", type: 'input', span: 7, offset: 1, valid: "required|number",
-    componentOption: {
+    key: '.physicalExam.pulse', label: "脉率", unit: "次/min", input_type: 'input', span: 7, offset: 1, rules: "required|number",
+    input_props: {
       type: "default",
     }
   },
   {
-    path: '.physicalExam.temperature', label: "体温", unit: "°C", type: 'input', span: 7, offset: 1, valid: "required|number",
-    componentOption: {
+    key: '.physicalExam.temperature', label: "体温", unit: "°C", input_type: 'input', span: 7, offset: 1, rules: "required|number",
+    input_props: {
       type: "default",
     }
   },
   {
-    path: ".fetuses", label: "", unit: "", type: "b-fetuses", span: 24, offset: 16,
-    valid: {
+    key: ".fetuses", label: "", unit: "", input_type: "b-fetuses", span: 24, offset: 16,
+    rules: {
       fetalPosition: "required",
       fetalHeartRate: "required",
       fetalMovement: "required",
@@ -118,20 +118,20 @@ const config: Array<FormConfig> = [
       avf: "required",
       umbilicalbloodflow: "required",
     },
-    componentOption: {
+    input_props: {
       type: null,
     }
   },
   {
-    path: '.familyHistory.hypertension', label: "高血压", unit: "", type: "checkbox", span: 24, offset: 0, valid: "",
-    componentOption: {
+    key: '.familyHistory.hypertension', label: "高血压", unit: "", input_type: "checkbox", span: 24, offset: 0, rules: "",
+    input_props: {
       type: "default",
     }
   },
   // 关于路径相同问题，在config中是不会覆盖的，不用担心
   {
-    path: '.familyHistory', label: "肝病", unit: "", type: "checkbox", span: 24, offset: 0, valid: "",
-    componentOption: {
+    key: '.familyHistory', label: "肝病", unit: "", input_type: "checkbox", span: 24, offset: 0, rules: "",
+    input_props: {
       type: "whether",
       // 仅在multiple下有的radio
       radio: true,
@@ -142,25 +142,25 @@ const config: Array<FormConfig> = [
         {
           key: true,
           editors:[{
-            path: "",
+            key: "",
             label: "药物名称",
             unit: "",
-            type: "input",
+            input_type: "input",
             span: 0,
             offset: 0,
-            valid: "",
-            componentOption: {
+            rules: "",
+            input_props: {
               type: "default",
             },
           },{
-            path: "",
+            key: "",
             label: "用药次数",
             unit: "次",
-            type: "select",
+            input_type: "select",
             span: 0,
             offset: 0,
-            valid: "",
-            componentOption: {
+            rules: "",
+            input_props: {
               type: "default",
               selectOptions: [
                 { value: 1, label: 1 },
@@ -180,8 +180,8 @@ const config: Array<FormConfig> = [
     }
   },
   {
-    path: ".familyHistory", label: "家族史", unit: "", type: "checkbox", span: 24, offset: 0, valid: "",
-    componentOption: {
+    key: ".familyHistory", label: "家族史", unit: "", input_type: "checkbox", span: 24, offset: 0, rules: "",
+    input_props: {
       type: "multiple",
       renderData: [
         {
@@ -194,14 +194,14 @@ const config: Array<FormConfig> = [
         {
           key: "epilepsy",
           editors: [{
-              path: "",
+              key: "",
               label: "药物名称",
               unit: "",
-              type: "input",
+              input_type: "input",
               span: 0,
               offset: 0,
-              valid: "",
-              componentOption: {
+              rules: "",
+              input_props: {
                 type: "default",
               },
           }]
@@ -210,8 +210,8 @@ const config: Array<FormConfig> = [
     }
   },
   {
-    path: ".fetuses", label: "胎儿检查table", unit: "", type: "table", span: 24, offset: 0, valid: "",
-    componentOption: {
+    key: ".fetuses", label: "胎儿检查table", unit: "", input_type: "table", span: 24, offset: 0, rules: "",
+    input_props: {
       type: "default",
       editable: true,
       tableColumns: [
@@ -219,14 +219,14 @@ const config: Array<FormConfig> = [
           key: "id",
           title: "id",
           editor: {
-            path: "",
+            key: "",
             label: "",
             unit: "",
-            type: "input",
+            input_type: "input",
             span: 0,
             offset: 0,
-            valid: "",
-            componentOption: {
+            rules: "",
+            input_props: {
               type: "default",
             },
           }

@@ -52,14 +52,14 @@ export function renderForm(config:Array<FormConfig> , formHandler:any, gridConfi
         key={`row-${row}|span-${count}`}
       >
         <FormItem 
-          actions={formHandler[config[i].path].actions} 
+          actions={formHandler[config[i].key].actions} 
           dispatch={formHandler.dispatch}
           defaultValue={config[i].value}
-          type={config[i].type}
+          type={config[i].input_type}
           label={config[i].label}
           unit={config[i].unit}
-          componentOption={config[i].componentOption}
-          validate={config[i].valid || ""}
+          input_props={config[i].input_props}
+          validate={config[i].rules || ""}
         />
       </Col>
     )

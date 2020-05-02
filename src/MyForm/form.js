@@ -24,7 +24,7 @@ export function createFormHandler(config){
     let r = {};
     config.forEach(v => {
       r = Object.assign(r, {
-        [v.path]: {
+        [v.key]: {
           actions:{}, 
           effects:{}
         }
@@ -66,6 +66,7 @@ export function createFormHandler(config){
 
   var dispatch = function(fieldName, eventName, args){
     console.log(eventCallBacks);
+    // TODO 判读有无没写
     return eventCallBacks[fieldName][eventName](args);
   }
 

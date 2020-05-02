@@ -70,7 +70,7 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
   }
 
   render(){
-    const { dispatch, type, label, componentOption, unit } = this.props;
+    const { dispatch, type, label, input_props, unit } = this.props;
     const { value, error, validate } = this.state;
     const MyComponent = MyComponents[type];
     return(
@@ -93,7 +93,7 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
       //           onChange={this.handleChange}
       //           dispatch={dispatch}
       //           value={value}
-      //           componentOption={componentOption}
+      //           input_props={input_props}
       //           error={error}
       //         />
       //         ) : (
@@ -127,7 +127,7 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
                 onChange={this.handleChange}
                 dispatch={dispatch}
                 value={value}
-                componentOption={componentOption}
+                input_props={input_props}
                 error={error}
               />
               ) : (

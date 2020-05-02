@@ -7,7 +7,7 @@ interface MySelectProps{
   onChange: Function,
   dispatch: Function,
   value: any,
-  componentOption: any
+  input_props: any
 }
 
 // TODO 之后再完善这里
@@ -30,8 +30,8 @@ export default class MySelect extends Component<MySelectProps,{}>{
   }
 
   renderSelect = () => {
-    const { componentOption, value } = this.props;
-    const selectOptions = componentOption.selectOptions.map((v:{label:string|number, value: string|number}) => (
+    const { input_props, value } = this.props;
+    const selectOptions = input_props.selectOptions.map((v:{label:string|number, value: string|number}) => (
       <Option
         value={v.value}
         key={v.value}

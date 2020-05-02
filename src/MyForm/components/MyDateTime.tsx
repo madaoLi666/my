@@ -6,7 +6,7 @@ interface MyDatePickerProp{
   onChange: Function,
   dispatch: Function,
   value: any,
-  componentOption: any
+  input_props: any
 }
 
 /**
@@ -29,8 +29,8 @@ export default function MyDateTime(props: MyDatePickerProp){
   }
 
   const renderDatePicker = () => {
-    if(props.componentOption){
-      const { type = defaultType, format = defaultFormat} = props.componentOption;
+    if(props.input_props){
+      const { type = defaultType, format = defaultFormat} = props.input_props;
       let val = props.value;
       if(props.value){
         let date = new Date(props.value);

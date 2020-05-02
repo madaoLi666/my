@@ -10,7 +10,7 @@ interface MyCheckboxProps {
   onChange: Function,
   dispatch: Function,
   value: any,
-  componentOption: CheckboxComponentProps
+  input_props: CheckboxComponentProps
 }
 
 /**
@@ -49,21 +49,21 @@ export default class MyCheckbox extends Component<MyCheckboxProps, any> {
   }
 
   checkbox: { [key: string]: Function } = {
-    "default": function (componentOption: CheckboxComponentProps, value: any, onChange: Function): ReactNode {
+    "default": function (input_props: CheckboxComponentProps, value: any, onChange: Function): ReactNode {
       return <Checkbox
         checked={value}
         onChange={(e) => onChange(e.target.checked)}
       />
     },
-    "whether": function (componentOption: CheckboxComponentProps, value: any, onChange: Function): ReactNode {
-      const { extraEditors } = componentOption;
-      let checkboxValue = value[componentOption.renderData[0].key];
-      let editorsValue = value[`${componentOption.renderData[0].key}Note`];
+    "whether": function (input_props: CheckboxComponentProps, value: any, onChange: Function): ReactNode {
+      const { extraEditors } = input_props;
+      let checkboxValue = value[input_props.renderData[0].key];
+      let editorsValue = value[`${input_props.renderData[0].key}Note`];
       // 转了格式，在这个位置转回来
       const handleChange = function (value: { checkboxValue: boolean, editorsValue: string }) {
         onChange({
-          [componentOption.renderData[0].key]: value.checkboxValue,
-          [`${componentOption.renderData[0].key}Note`]: value.editorsValue
+          [input_props.renderData[0].key]: value.checkboxValue,
+          [`${input_props.renderData[0].key}Note`]: value.editorsValue
         })
       }
       return <WhetherCheckbox
@@ -72,14 +72,15 @@ export default class MyCheckbox extends Component<MyCheckboxProps, any> {
         extraEditors={extraEditors}
       />;
     },
-    "multiple": function (componentOption: CheckboxComponentProps, value: any, onChange: Function): ReactNode {
-      const r = componentOption.renderData.map((v: any) => ({
+    "multiple": function (input_props: CheckboxComponentProps, value: any, onChange: Function): ReactNode {
+      const r = input_props.renderData.map((v: any) => ({
         checkboxValue: value[v.key],
         editorsValue: value[`${v.key}Note`],
         key: v.key,
         label: v.label
       }));
       const handleChange = function (val: any, key: string) {
+        console.log(val);
         let newObj = {
           [key]: val.checkboxValue,
           [key + 'Note']: val.editorsValue
@@ -89,16 +90,16 @@ export default class MyCheckbox extends Component<MyCheckboxProps, any> {
       return <MultipleCheckbox
         value={r}
         onChange={handleChange}
-        radio={componentOption.radio || true}
-        extraEditors={componentOption.extraEditors}
+        radio={input_props.radio || true}
+        extraEditors={input_props.extraEditors}
       />
     }
   }
 
   renderCheckbox = () => {
-    const { componentOption, value, onChange } = this.props;
-    const { type } = componentOption;
-    return this.checkbox[type || "default"](componentOption, value, onChange);
+    const { input_props, value, onChange } = this.props;
+    const { type } = input_props;
+    return this.checkbox[type || "default"](input_props, value, onChange);
   }
 
   render() {
@@ -185,7 +186,7 @@ class MultipleCheckbox extends Component<MultipleCheckboxProps>{
   }
 
   renderCheckbox = () => {
-    const { value, extraEditors, onChange } = this.props;
+    const { value, extraEditors } = this.props;
     let renderDOM: Array<ReactNode> = [];
     for (let i = 0; i < value.length; i++) {
       for (let j = 0; j < extraEditors.length; j++) {

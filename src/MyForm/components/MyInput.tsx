@@ -7,7 +7,7 @@ interface MyInputProps{
   onChange: Function,
   dispatch?: Function,
   value: any,
-  componentOption: any
+  input_props: any
 }
 
 export default class MyInput extends React.Component<MyInputProps,{}>{
@@ -20,13 +20,13 @@ export default class MyInput extends React.Component<MyInputProps,{}>{
   }
 
   renderInput = () => {
-    const { componentOption } = this.props;
-    if(componentOption){
-      if(componentOption.type === "textarea"){
+    const { input_props } = this.props;
+    if(input_props){
+      if(input_props.type === "textarea"){
         return <Input.TextArea value={this.props.value} onChange={this.handleChange}/>
-      }else if(componentOption.type === "password"){
+      }else if(input_props.type === "password"){
         return <Input.Password value={this.props.value} onChange={this.handleChange}/>
-      }else if(componentOption.type === "text"){
+      }else if(input_props.type === "text"){
         return <Input value={this.props.value} onChange={this.handleChange}/>
       }
     }

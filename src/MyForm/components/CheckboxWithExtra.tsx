@@ -22,7 +22,7 @@ export default class CheckboxWithExtra extends Component<CheckboxWithExtraProps>
         editorsValue
       });
     } else if (name === "editorValue") {
-      let newEditorsValue = Object.assign(JSON.parse(editorsValue) || {}, { [index]: value });
+      let newEditorsValue = editorsValue ? Object.assign(JSON.parse(editorsValue) || {}, { [index]: value }) : { [index]: value}
       onChange({
         checkboxValue,
         editorsValue: JSON.stringify(newEditorsValue)
@@ -39,7 +39,7 @@ export default class CheckboxWithExtra extends Component<CheckboxWithExtraProps>
       newEditorValue = JSON.parse(editorValue);
     }
     return editors.map((v: any, index: number) => {
-      const RenderComponent = MyComponent[v['type']];
+      const RenderComponent = MyComponent[v['input_type']];
       return (
         <div key={index}>
           <label>{v.label}</label>

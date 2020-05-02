@@ -1,111 +1,121 @@
-import React, { Component } from 'react';
-import { Table, Button, Input } from 'antd';
-import MyComponent from './index';
+import React, { Component } from "react";
+import { Table, Button, Input } from "antd";
+import MyComponent from "./index";
 
-interface EditableCellProps{
-  value: any,
-  onChange: Function,
-  editor: any
+interface EditableCellProps {
+  value: any;
+  onChange: Function;
+  editor: any;
 }
 
-class EditableCell extends Component<EditableCellProps>{
-
+class EditableCell extends Component<EditableCellProps> {
   state = {
-    editing: false
+    editing: false,
+    value: "",
+  };
+
+  mapPropsToState() {
+    this.setState({value: this.props.value});
   }
 
-  handleChange = (val:any) => {
-    console.log('change');
-    if(!this.state.editing){
-      this.props.onChange(val);
+  componentDidMount() {
+    this.mapPropsToState()
+  }
+
+  componentDidUpdate(prevProps: EditableCellProps):void {
+    if(JSON.stringify(prevProps) !== JSON.stringify(this.props)){
+      this.mapPropsToState()
     }
   }
 
-  handledbClick = (e:any) => {
-    if(this.props.editor){
-      this.setState({editing: true});
+  handleChange = (val: any) => {
+    console.log("change");
+    this.setState({ value: val });
+  };
+
+  handledbClick = (e: any) => {
+    if (this.props.editor) {
+      this.setState({ editing: true });
     }
-  }
+  };
   handleBlur = () => {
-    console.log('111');
-    this.setState({editing: false});
-  }
+    this.setState({ editing: false }, () => {
+      this.props.onChange(this.state.value);
+    });
+  };
 
-  render(){
+  render() {
     const { editing } = this.state;
     const { editor, value } = this.props;
-    // console.log(editing);
-    // 目前仅做支持一个输入框
     let RenderComponent = null;
-    
-    if(editor){
-      RenderComponent = MyComponent[editor.type];
+
+    if (editor) {
+      RenderComponent = MyComponent[editor.input_type];
     }
 
     return (
       <div
         onDoubleClick={this.handledbClick}
         onBlur={this.handleBlur}
+        style={{ width: "100%" }}
       >
         {editing ? (
           <RenderComponent
-             {...editor}
-             onChange={this.handleChange}
+            {...editor}
+            onChange={(val: any) => this.handleChange(val)}
+            value={this.state.value}
           />
         ) : (
           <span>{value}</span>
         )}
       </div>
-    )
-
+    );
   }
 }
 
 interface MyTableProps {
-  onChange: Function,
-  dispatch: Function,
-  value: any,
-  componentOption: any
+  onChange: Function;
+  dispatch: Function;
+  value: any;
+  input_props: any;
 }
 
-
-export default class MyTable extends Component<MyTableProps>{
-  constructor(props: MyTableProps){
+export default class MyTable extends Component<MyTableProps> {
+  constructor(props: MyTableProps) {
     super(props);
     this.state = {
       tableColumns: [],
-      dataSource: []
-    }
+      dataSource: [],
+    };
   }
 
   componentDidUpdate(prevProps: MyTableProps) {
-    if(JSON.stringify(prevProps) !== JSON.stringify(this.props)){
-
+    if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
     }
   }
 
-  handleEdit = (val:any, key: string, index: number) => {
+  handleEdit = (val: any, key: string, index: number) => {
     const { onChange } = this.props;
     let { value } = this.props;
     value[index][key] = val;
     onChange(value);
-  }
+  };
 
   // 这里的修改应该需要改变
   render() {
-    const { componentOption, value } = this.props;
-    let { tableColumns } = componentOption;
+    const { input_props, value } = this.props;
+    let { tableColumns } = input_props;
     tableColumns = tableColumns.map((v: any) => ({
       ...v,
       dataIndex: v.key,
       render: (text: string, record: any, index: number) => (
         <EditableCell
           value={text}
-          onChange={(val: any) => this.handleEdit(val,v.key,index)}
+          onChange={(val: any) => this.handleEdit(val, v.key, index)}
           editor={v.editor}
         />
-      )
-    }))
+      ),
+    }));
     return (
       <div>
         <div>
@@ -114,9 +124,9 @@ export default class MyTable extends Component<MyTableProps>{
         <Table
           columns={tableColumns || []}
           dataSource={value || []}
-          rowKey={record => record.id}
+          rowKey={(record) => record.id}
         />
       </div>
-    )
+    );
   }
 }
