@@ -52,15 +52,20 @@ export default class FormItem extends Component<FormItemProp,FormItemState>{
           console.error('缺失setValue Function');
         }
         // TODO 这个位置先将object/array的valid不在handlechange时触发，以后可以加入trigger去做响应
-        if(this.props.actions.valid && typeof val !== "object"){
-          this.props.actions.valid();
+        if(this.props.actions.valid){
+          if(typeof val === "object"){
+            console.warn('校验对象为引用类型,暂时不做onChange校验');
+          }else{
+            this.props.actions.valid();
+          }
         }else{
-          console.error('缺失valid Function || 校验对象为object/Array');
+          console.error('缺失valid Function || ');
         }
       }
     });
   }
 
+  // 渲染required星号
   renderAsterisk = (validate: string|object|RegExp|null):ReactNode => {
     let isRender = false;
     if(Object.prototype.toString.call(validate) === "[object String]"){
