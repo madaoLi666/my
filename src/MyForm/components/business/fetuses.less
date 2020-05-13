@@ -33,7 +33,15 @@
   font-size: @normalFontSize;
   color: rgba(0,0,0,.85);
   margin: @normalInputHeight/2 0;
-
+  .fetus-title {
+    margin: 20px 0;
+    padding-left: 25px;
+    font-size: small;
+    > button {
+      font-size: small;
+      margin-left: 4px;
+    }
+  }
   .fetus-form-item {
     display: flex;
     flex-direction: column;
@@ -45,8 +53,6 @@
     .label{
       height: @normalInputHeight;
       text-align: right;
-      // display: flex;
-      // flex-direction: row-reverse;
       width: @formItemLabelWidth;
       > label {
         padding-right: @labelPaddingRight;

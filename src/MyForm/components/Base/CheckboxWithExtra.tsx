@@ -1,19 +1,18 @@
 import React,{Component} from 'react';
 import {Checkbox} from 'antd';
+import { FormConfig } from '../../interface';
+import MyComponent from '../index';
+import styles from './CheckboxWithExtra.less';
 
-import MyComponent from '../components/index';
-
-
-// 附带编辑器的checkbox
 interface CheckboxWithExtraProps {
-  editors: Array<any>,
+  editors: Array<FormConfig>,
   checkboxValue: boolean,
-  editorsValue: string,
+  editorsValue: Array<any>,  // 以 {"0":"", "1": ""} 输入输出
   onChange: Function
 }
 
 export default class CheckboxWithExtra extends Component<CheckboxWithExtraProps>{
-  // index 这个参数仅在extraEditor时使用
+
   handleChange = (value: any, name: string, index: number) => {
     const { checkboxValue, editorsValue, onChange } = this.props;
     if (name === "checkboxValue") {
@@ -22,33 +21,29 @@ export default class CheckboxWithExtra extends Component<CheckboxWithExtraProps>
         editorsValue
       });
     } else if (name === "editorValue") {
-      let newEditorsValue = editorsValue ? Object.assign(JSON.parse(editorsValue) || {}, { [index]: value }) : { [index]: value}
+      const newEditorsValue = editorsValue.map((editorValue:any) => editorValue);
+      newEditorsValue[index] = value;
       onChange({
         checkboxValue,
-        editorsValue: JSON.stringify(newEditorsValue)
+        editorsValue: newEditorsValue
       })
     }
   }
-  // 当checkbox选中时，渲染额外的编辑器供其输入
-  // 输出格式为 {"0":"", "1": ""}, 数字代表编辑器的顺序
-  renderExtra = (editorValue: string) => {
-    const { editors } = this.props;
+
+  renderExtra = (editorsValue: Array<any>) => {
+    const { editors = [] } = this.props;
     if (!editors || editors.length === 0) return null;
-    let newEditorValue: any = {}
-    if (editorValue) {
-      newEditorValue = JSON.parse(editorValue);
-    }
-    return editors.map((v: any, index: number) => {
-      const RenderComponent = MyComponent[v['input_type']];
+    return editors.map((editor: FormConfig, index: number) => {
+      const RenderComponent = MyComponent[editor.input_type];
       return (
-        <div key={index}>
-          <label>{v.label}</label>
+        <div key={index} className={styles['extra-editors']}>
+          <span className={styles['extra-editors-label']}>{editor.label}</span>
           <RenderComponent
-            value={newEditorValue[index]}
-            {...v}
+            value={editorsValue === null ? null : editorsValue[index]}
+            {...editor}
             onChange={(value: any) => this.handleChange(value, "editorValue", index)}
           />
-          <span>{v.unit}</span>
+          <span>{editor.unit}</span>
         </div>
       )
     })
@@ -57,10 +52,11 @@ export default class CheckboxWithExtra extends Component<CheckboxWithExtraProps>
   render() {
     const { checkboxValue, editorsValue } = this.props;
     return (
-      <div>
+      <div className={styles['checkox-with-extra']}>
         <Checkbox
+          className={styles.checkbox}
           checked={checkboxValue}
-          onChange={(e) => this.handleChange(e.target.checked, "checkboxValue", -1)}
+          onChange={(e:any) => this.handleChange(e.target.checked, "checkboxValue", -1)}
         >{this.props.children}</Checkbox>
         {checkboxValue ? this.renderExtra(editorsValue) : null}
       </div>

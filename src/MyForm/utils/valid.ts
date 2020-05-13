@@ -47,12 +47,12 @@ const validateRules: ValidateRule = {
  * 暂时写any 以后改类型
  */
 
-export const validFun = function(data:any, rules:any):any{
+export const validFun = function validFun(data:any, rules:any):any{
   if(!rules) return "";
   let errorTip:any = "";
   // data 为 null时，typeof为object
   if(isStr(rules) && (isBase(data) || !data)){
-    let ruleArr = rules.split(SPLIT_KEY);
+    const ruleArr = rules.split(SPLIT_KEY);
     let isValid = true;
     for(let i = 0 ; i < ruleArr.length ; i++){
       isValid = validateRules[ruleArr[i]](data);
@@ -75,7 +75,7 @@ export const validFun = function(data:any, rules:any):any{
     errorTip = rules.test(data) ? "" : `正则验证 ${rules} 不通过`;
   }else if(isObj(rules) && isArr(data)){
     errorTip = data.map((v:any) => {
-      let obj = Object.assign({},v);
+      const obj = Object.assign({},v);
       Object.keys(obj).forEach((key: string) => {
         obj[key] = "";
       });

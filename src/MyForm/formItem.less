@@ -9,7 +9,7 @@
   // 这个时常规Input的高度
   line-height: @normalInputHeight;
   
-  .formItem-label {
+  .formItem-inline-label {
     height: @normalInputHeight;
     text-align: right;
     // display: flex;
@@ -44,8 +44,21 @@
 
   
 }
-.formItem-error{
 
+.formItem-header-label {
+  height: @normalInputHeight;
+  width: 100%;
+  > h1 {
+    line-height: @normalInputHeight;
+    color: rgba(0,0,0,.85);
+    font-size: 1.5rem;
+    padding-left: @formItemLabelWidth / 2;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #000000;
+  }
+}
+
+.formItem-error{
   margin-left: @formItemLabelWidth;
   // 减去label和unit的值
   width: calc( 100% - @formItemLabelWidth);
@@ -53,6 +66,14 @@
   color: red;
 }
 
-.business-component{
-  width: 100%;
-}
+// .business-component{
+//   width: 100%;
+//   > .formItem-label {
+//     border-bottom: 1px solid #000000;
+//     display: block;
+//     width: 100%;
+//     color: rgba(0,0,0,.85);
+//     font-size: large ;
+//     font-weight: 600;
+//   }
+// }

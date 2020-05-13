@@ -1,11 +1,10 @@
-// TODO 用ts重写
 function isArr(v){
   return Object.prototype.toString.call(v) === '[object Array]';
 }
 
-export function createFormHandler(config){
+export function createFormHandler(config, submitChange){
   if(!isArr(config)){
-    throw new Error('expect array but'+ typeof config);
+    throw new Error(`expect array but${typeof config}`);
   }
   /**
    * @param {string} fieldName
@@ -15,16 +14,18 @@ export function createFormHandler(config){
    *   eventName:cb
    * }
    */
-  var eventCallBacks = {}
-  var formState = {
+
+  const eventCallBacks = {}
+  const formState = {
     validated: false,
   }
 
-  var initField = function(config) {
+  // c - config
+  const initField = function(c) {
     let r = {};
-    config.forEach(v => {
+    c.forEach(v => {
       r = Object.assign(r, {
-        [v.key]: {
+        [v.name]: {
           actions:{}, 
           effects:{}
         }
@@ -33,8 +34,7 @@ export function createFormHandler(config){
     return r;
   }
   
-
-  var submit = function(){
+  const submit = function() {
     let r = {}
     let validCode = true;
     Object.keys(this).forEach(key => {
@@ -50,13 +50,13 @@ export function createFormHandler(config){
         }
       }
     })
-    return new Promise((resolve) => {
-      resolve({validCode: validCode,data: r})
+    return new Promise(resolve => {
+      resolve({validCode,res: r})
     })
   }
 
-  var subscribe = function(fieldName, eventName, cb){
-    if(fieldName in this){
+  const subscribe = function(fieldName, eventName, cb) {
+    if(fieldName in this || fieldName === "_global"){
       if(!eventCallBacks[fieldName]){
         eventCallBacks[fieldName] = {};
       }
@@ -64,13 +64,18 @@ export function createFormHandler(config){
     }
   }
 
-  var dispatch = function(fieldName, eventName, args){
-    console.log(eventCallBacks);
-    // TODO 判读有无没写
-    return eventCallBacks[fieldName][eventName](args);
+  const dispatch = function(fieldName, eventName, args) {
+    try{
+      if(fieldName !== "_global" && submitChange){
+        dispatch("_global", "change");
+      }
+      return eventCallBacks[fieldName][eventName](args);
+    }catch(e){
+      // console.warn(e);
+    }
   }
 
-  var formHandler = {...initField(config)}
+  const formHandler = {...initField(config)}
   formHandler.submit = submit;
   formHandler.subscribe = subscribe;
   formHandler.dispatch = dispatch;

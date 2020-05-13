@@ -1,56 +1,76 @@
+// Checkbox
 interface ExtraEditors {
-  key: any, // 此处key对应的是checkbox的value值
-  editors: Array<FormConfig>
+  key: any, 
+  editors: Array<FormConfig>,
+}
+
+interface RenderData {
+  key: string,
+  label: string,
+  // 暂时仅用于custom
+  options?: Array<{
+    label:string|number|boolean,
+    value:string|number|boolean
+  }>,
+  extraEditors?: Array<ExtraEditors>
+}
+
+// Table
+interface TableColumns {
+  key?: string,
+  title: string,
+  children?: Array<TableColumns>,
+  width?: number,
+  editor?: FormConfig
 }
 
 export interface ComponentOption {
-  type: string | null, // 单一组件多重展开
-  // valid: string|object|RegExp|null,
-  
+  type?: string | null,
   // select
-  selectOptions?: Array<{ value: string | number, label: string | number }> | null,
-  
+  options?: Array<{ 
+    value: string | number,
+    label: string | number
+  }>,
+
   // date
   format?: string,
-  
-  // checkbox
+  // checkbox | select 公用
   radio?: boolean,
   extraEditors?: Array<ExtraEditors>,
-  // 这个属性有可能适用于其他组件
-  renderData?: Array<string>|Array<{key:string,label: string}>
-  
+  renderData?: Array<RenderData>,
   // table
-  editable?: boolean, // 自动提供button和编辑功能
-  tableColumns?: Array<{
-    key: string,
-    title: string,
-    editor?: FormConfig      // 对自带的组件库索引
-  }> 
+  editable?: boolean,
+  tableColumns?: Array<TableColumns>,
+  // SimpleObject
+  config?: Array<FormConfig>
 }
 
 export interface FormConfig {
+  name: string,
   key: string,
-  label: string,
-  unit: string,
+  label?: string,
+  unit?: string,
   input_type: string,
-  span: number,
-  offset: number,
+
+  span?: number,
+  offset?: number,
   hidden?: boolean,
+  header_label?: boolean,
+  is_new_ros?: boolean, 
   value?: any,
-  rules: string | object | RegExp | null,
-  input_props: ComponentOption,
+  rules?: string | object | RegExp | null,
+  input_props?: ComponentOption,
 }
 
 export interface MyFormProp {
   config: Array<FormConfig>,
-  // TODO func类型
-  getFormHandler?: (func: any) => void
+  getFormHandler?: (func: any) => void,
+  submitChange: boolean
 }
 
 export interface MyFormState {
   formHandler: any
 }
-
 
 export interface FormItemProp {
   actions?: {
@@ -58,17 +78,20 @@ export interface FormItemProp {
     getValue?: () => any,
     valid?: () => any
   },
-  dispatch?: () => void,
+  dispatch: (fieldName: string, eventName: string, args: any) => void,
   defaultValue?: any,
   type: string,
   label: string,
+  header_label: boolean
   unit: string,
   input_props: ComponentOption | null,
-  validate?: string | object | RegExp | null
+  validate?: string | object | RegExp | null,
+  path: string,
+  name: string
 }
-
 export interface FormItemState {
   value: any,
   error: any,
+  path: string,
   validate: string | object | RegExp | null
 }

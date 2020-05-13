@@ -16,7 +16,7 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'babel-loader',
+            loader: 'babel-loader?preset[]=react,presets[]=es2015',
             options: {
               babelrc: true,
               cacheDirectory: true,
@@ -26,24 +26,26 @@ module.exports = {
       },
       {
         test: /\.ts(x?)$/,
+        exclude: /node_modules/,
         use:[
           {
-            loader: 'awesome-typescript-loader',
+            loader: 'babel-loader',
             options:{
-
+              // presets: [
+              //   '@babel/preset-react',
+              // ]
             }
           }
         ]
       },
       // {
       //   test: /\.css$/,
-      //   include: [/node_modules|antd\.css/],
+      //   include: [/[node_modules|antd]\.css/],
       //   use: [
       //     "style-loader",
       //     "css-loader"
       //   ]
       // },
-      // 暂时先这样 css不支持模块化
       {
         test: /\.css$/,
         // exclude: [/node_modules|antd\.css/],
@@ -64,7 +66,10 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx']
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    alias: {
+      '@': path.resolve(__dirname, "../src")
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({

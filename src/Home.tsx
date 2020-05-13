@@ -1,11 +1,10 @@
-import * as React from 'react';
-import {Input} from 'antd'
+import React from 'react';
 import MyForm from './MyForm/index';
 import config from './localdata/config';
 import data from './localdata/data';
-import { getRenderData, toFormat } from './MyForm/utils';
+import styles from './Home.less';
 
-import './Home.css';
+import { getRenderData, getFormData} from '@/MyForm/utils';
 
 interface HomeState{
   formHandler:{
@@ -26,15 +25,18 @@ export default class Home extends React.Component<{},HomeState>{
 
 
   componentDidUpdate(){
-    // if(this.state.formHandler.sub)
+    const { formHandler } = this.state;
+    formHandler.subscribe("lmp", "change", (val: any) => {
+      formHandler['sureEdd'].actions.setValue("2020-01-01");
+    });
+    // console.log(formHandler);
   }
 
 
   handleSubmit = () => {
-    this.state.formHandler.submit().then(({validCode, data}:any) => {
-      
-      console.log(data);
-      console.log(toFormat(data));
+    this.state.formHandler.submit().then(({validCode, res}:any) => {
+      console.log(res);
+      console.log(getFormData(res));
       // if(!validCode){
       // }
     });
@@ -44,13 +46,15 @@ export default class Home extends React.Component<{},HomeState>{
     const myConfig = getRenderData(config, data);
     // 不要再页面render中尝试取formHandler的值，因为这个时候formItem初始化还没有完成
     return(
-      <div>
+      <div className={styles.container}>
         <MyForm
           config={myConfig}
-          getFormHandler={(formHandler) => this.setState({formHandler})}
+          getFormHandler={(formHandler:any) => this.setState({formHandler})}
+          submitChange={false}
         />
         <button
           // onClick={() => this.state.formHandler.submit()}
+          type="button"
           onClick={this.handleSubmit}
         >提交</button>
       </div>
