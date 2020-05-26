@@ -1,23 +1,41 @@
 @import "../../index.less";
 .array-custom{
-  margin-top: @normalInputHeight;
-  .button-add {
+  margin-top: @normalInputHeight/2;
+  .add-btn {
     text-align: right;
+    padding-right: 10%;
   }
 
   .array-form {
     .title {
+      color: @labelColor;
       display: flex;
       flex-direction: row;
       height: @normalInputHeight;
       line-height: @normalInputHeight;
       > div {
-        margin-left: 4px;
-        height: @normalInputHeight;
-        > * {
-          height: @normalInputHeight;
-          height: @normalInputHeight;
+        width: 100%;
+        padding-left: 2rem;
+        border-bottom: 1px solid @labelLineColor;
+        > span {
+          position: relative;
+          background-color: @backgroundColor;
+          top: @normalInputHeight / 2;
+          padding: 0 2px;
         }
+      }
+    }
+
+    .main {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .custom {
+        width: 90%;
+      }
+      .delete-btn{
+        height: 100%;
+        width: 10%;
       }
     }
   }

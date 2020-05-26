@@ -1,36 +1,36 @@
-interface ValidateRule{
-  [key:string]: (val: any) => boolean
+interface ValidateRule {
+  [key: string]: (val: any) => boolean
 }
 
 const SPLIT_KEY = "|";
-function isBase(data: any):boolean{
+function isBase(data: any): boolean {
   return typeof data !== "object";
 }
-function isStr(data:any):boolean{
+function isStr(data: any): boolean {
   return Object.prototype.toString.call(data) === "[object String]";
 }
 
-function isArr(data: any):boolean{
+function isArr(data: any): boolean {
   return Object.prototype.toString.call(data) === "[object Array]";
 }
 
-function isObj(data:any):boolean{
+function isObj(data: any): boolean {
   return Object.prototype.toString.call(data) === '[object Object]';
 }
-function isRegExp(data: any):boolean{
+function isRegExp(data: any): boolean {
   return data instanceof RegExp;
 }
 
-const errorText:{[key:string]:string} = {
+const errorText: { [key: string]: string } = {
   "required": "此输入值不可为空",
   "number": "请输入数字"
 }
 
 const validateRules: ValidateRule = {
-  "required":function(val:any):boolean{
-    return !!val;
+  "required": function (val: any): boolean {
+    return val !== undefined && val !== "" && val !== null;
   },
-  "number":function(val:any):boolean{
+  "number": function (val: any): boolean {
     return /^[0-9]+$/.test(val);
   }
 }
@@ -47,45 +47,45 @@ const validateRules: ValidateRule = {
  * 暂时写any 以后改类型
  */
 
-export const validFun = function validFun(data:any, rules:any):any{
-  if(!rules) return "";
-  let errorTip:any = "";
+export const validFun = function validFun(data: any, rules: any): any {
+  if (!rules) return "";
+  let errorTip: any = "";
   // data 为 null时，typeof为object
-  if(isStr(rules) && (isBase(data) || !data)){
+  if (isStr(rules) && (isBase(data) || !data)) {
     const ruleArr = rules.split(SPLIT_KEY);
     let isValid = true;
-    for(let i = 0 ; i < ruleArr.length ; i++){
+    for (let i = 0; i < ruleArr.length; i++) {
       isValid = validateRules[ruleArr[i]](data);
-      if(!isValid){
+      if (!isValid) {
         errorTip = errorText[ruleArr[i]];
         break;
       }
     }
-  }else if(isObj(rules) && isObj(data)){
+  } else if (isObj(rules) && isObj(data)) {
     errorTip = Object.assign({}, rules);
-    try{
-      Object.keys(rules).forEach((key:string) => {
+    try {
+      Object.keys(rules).forEach((key: string) => {
         errorTip[key] = "";
         errorTip[key] = validFun(data[key], rules[key]);
       });
-    }catch(e){
+    } catch (e) {
       console.error(e);
     }
-  }else if(isRegExp(rules) && (!isBase(data) || !data)){
+  } else if (isRegExp(rules) && (!isBase(data) || !data)) {
     errorTip = rules.test(data) ? "" : `正则验证 ${rules} 不通过`;
-  }else if(isObj(rules) && isArr(data)){
-    errorTip = data.map((v:any) => {
-      const obj = Object.assign({},v);
+  } else if (isObj(rules) && isArr(data)) {
+    errorTip = data.map((v: any) => {
+      const obj = Object.assign({}, v);
       Object.keys(obj).forEach((key: string) => {
         obj[key] = "";
       });
       return obj;
     });
-    for(let i = 0 ; i < errorTip.length ;i++){
+    for (let i = 0; i < errorTip.length; i++) {
       errorTip[i] = validFun(data[i], rules);
     }
     console.log(errorTip);
-  }else{
+  } else {
     console.error(`Type of rules is ${typeof rules}, but type of data is ${typeof data} `);
   }
   return errorTip;

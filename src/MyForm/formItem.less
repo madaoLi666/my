@@ -1,15 +1,14 @@
 @import './index.less';
-@formItemLabelWidth: 120px;
-@formItemUnitWidth: 60px;
 
 .form-item{
   display: flex;
   flex-direction: row;
   width: 100%;
+  margin: @normalInputHeight/8 0;
   // 这个时常规Input的高度
   line-height: @normalInputHeight;
-  
-  .formItem-inline-label {
+
+  .form-item-inline-label {
     height: @normalInputHeight;
     text-align: right;
     // display: flex;
@@ -25,55 +24,55 @@
     }
   }
 
-  .formItem-main {
+  .form-item-main {
     width: calc(100% - @formItemLabelWidth - @formItemUnitWidth);
-    // margin: 0 auto;
     > span {
       height: @normalInputHeight;
       line-height: @normalInputHeight;
     }
-    // TODO
-    // 考虑加入一个错误样式用于报渲染的错误
+
+    input:not(textarea) {
+      height: @normalInputHeight;
+    }
   }
-  
-  .formItem-unit{
+
+  .form-item-full-main {
+    width: 100%;
+  }
+
+  .form-item-unit{
     padding-left: 5px;
     width: @formItemUnitWidth;
     text-align: left;
   }
 
-  
+
 }
 
-.formItem-header-label {
+.form-item-header-label {
   height: @normalInputHeight;
   width: 100%;
   > h1 {
     line-height: @normalInputHeight;
-    color: rgba(0,0,0,.85);
-    font-size: 1.5rem;
+    color: @labelColor;
+    font-size: 16px;
+    margin: 0;
     padding-left: @formItemLabelWidth / 2;
-    padding-bottom: 4px;
-    border-bottom: 1px solid #000000;
+    border-bottom: 2px solid @labelLineColor;
+    width: 100%;
+    > span {
+      padding: 0 1rem;
+      background-color: @backgroundColor;
+      position: relative;
+      top: @normalInputHeight / 2;
+    }
   }
 }
 
-.formItem-error{
+.form-item-error{
   margin-left: @formItemLabelWidth;
   // 减去label和unit的值
   width: calc( 100% - @formItemLabelWidth);
   text-align: left;
   color: red;
 }
-
-// .business-component{
-//   width: 100%;
-//   > .formItem-label {
-//     border-bottom: 1px solid #000000;
-//     display: block;
-//     width: 100%;
-//     color: rgba(0,0,0,.85);
-//     font-size: large ;
-//     font-weight: 600;
-//   }
-// }

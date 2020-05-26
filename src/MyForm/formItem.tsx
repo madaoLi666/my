@@ -4,6 +4,7 @@ import React, { Component, ReactNode } from 'react';
 import MyComponents from './components/index';
 import { FormItemProp, FormItemState } from './interface';
 import { validFun } from './utils/valid';
+import { isEmpty, isObj, isArr } from './utils/func';
 import styles from './formItem.less';
 
 function isBase(val: any): boolean {
@@ -22,6 +23,17 @@ export default class FormItem extends Component<FormItemProp, FormItemState>{
     const self = this;
     if (props.actions) {
       props.actions.getValue = function getValue() {
+        // 可以考虑在这个位置做一个拦截提交
+        if(self.state.path === ".*" && props.input_props.type === "custom"){
+          const key = props.input_props.renderData[0].key;
+          return {
+            value: {
+              [key]: self.state.value[key],
+              [`${key}Note`]: self.state.value[`${key}Note`]
+            },
+            path: self.state.path
+          }
+        }
         return {
           value: self.state.value,
           path: self.state.path
@@ -30,59 +42,85 @@ export default class FormItem extends Component<FormItemProp, FormItemState>{
       props.actions.setValue = function setValue(val) {
         self.setState({ value: val });
       }
+      props.actions.reset = function reset() {
+        if(props.hidden){
+          return;
+        }
+        if(isObj(self.state.value)){
+          self.setState({ value: {} },() => {
+          });
+        }else if(isArr(self.state.value)){
+          self.setState({ value: [] });
+        }else{
+          self.setState({ value: null });
+        }
+      }
       props.actions.valid = function valid() {
         const error = validFun(self.state.value, props.validate || "");
+        // childrenError boolean
+        let childrenError: any = true;
+        if(props.type.indexOf("custom") !== -1){
+          childrenError = self.childrenValid();
+        }
         self.setState({ error });
-        return error === "" || JSON.stringify(error) === "{}";
+        return isEmpty(error) && childrenError;
       }
     }
   }
 
   componentDidMount() {
     this.setState({
-      value: this.props.defaultValue,
+      value: this.props.value,
       validate: this.props.validate || "",
       path: this.props.path
     });
   }
-
+  
+  // 外部页面更新引发
   componentDidUpdate(prevProps: FormItemProp) {
     if (JSON.stringify(this.props) !== JSON.stringify(prevProps)) {
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
-        value: this.props.defaultValue,
+        value: this.props.value,
         validate: this.props.validate || "",
         path: this.props.path
       });
     }
   }
 
-  handleChange = (val: any) => {
-    const { name, dispatch } = this.props;
+  // 获取组件内部的自己的验证方法
+  getChildrenValid = (func: any) => {
+    if(func){
+      this.childrenValid = func;
+    }
+  }
+
+  // 承载组件的验证方法 - 相当于一个别名/引用
+  childrenValid = () => {
+    return true;
+  }
+
+  handleChange = (val: any, error: any = "") => {
+    const { name, dispatch, hidden } = this.props;
+    if(hidden){
+      return;
+    }
     this.setState({ value: val }, () => {
-      if (name) {
-        dispatch(name, "change", val);
-      }
-      if (this.props.actions) {
-        if (this.props.actions.setValue) {
-          this.props.actions.setValue(this.state.value);
-        } else {
-          console.error('缺失setValue Function');
-        }
-        // TODO 这个位置先将object/array的valid不在handlechange时触发，以后可以加入trigger去做响应
-        if (this.props.actions.valid) {
-          if (typeof val === "object") {
-            console.warn('校验对象为引用类型,暂时不做onChange校验');
-            // this.props.actions.valid();
-          } else {
-            this.props.actions.valid();
-          }
-        } else {
-          console.error('缺失valid Function || ');
-        }
-      }
+      if (name) { dispatch(name, "change", val); }
+      const err = validFun(this.state.value, this.props.validate || "");
+      this.setState({error: err || error});
     });
   }
+
+  /**
+   * 这个dispatch默认会使用本组件渲染的路径
+   */
+  handleDispatch = (eventName: string, args: any) => {
+    const { name, dispatch } = this.props;
+    dispatch(name, eventName, args);
+  }
+
+
 
   // 渲染required星号
   renderAsterisk = (validate: string | object | RegExp | null): ReactNode => {
@@ -93,32 +131,48 @@ export default class FormItem extends Component<FormItemProp, FormItemState>{
     return isRender ? <span style={{ color: 'red' }}>*</span> : null
   }
 
+  // renderHeader = () => {
+  //   const { header_label, label } = this.props;
+  //   const { validate } = this.state;
+  //   return 
+  // }
+
   render() {
-    const { dispatch, type, label, input_props, unit, path, header_label } = this.props;
+    const { subscribe, type, label, input_props, unit, header_label } = this.props;
     const { value, error, validate } = this.state;
     const MyComponent = MyComponents[type];
     return (
       <div>
         {label !== "" && header_label ? (
-          <div className={styles['formItem-header-label']}>
-            <h1>{this.renderAsterisk(validate)}{label}</h1>
+          <div className={styles['form-item-header-label']}>
+            <h1>
+              <span>
+                {this.renderAsterisk(validate)}{label}
+              </span>
+            </h1>
           </div>
         ) : null}
         <div className={styles['form-item']}>
-          <div className={styles['formItem-inline-label']}>
-            {label !== "" && !header_label ? (
+          {label !== "" && !header_label ? (
+            <div className={styles['form-item-inline-label']}>
               <label>{this.renderAsterisk(validate)}{label}:</label>
-            ) : null}
-          </div>
-          <div className={styles['formItem-main']}>
+            </div>
+          ) : null}
+          {/*
+            * full-main 代表label为header形式出现
+            * main      label在同一行
+            */}
+          <div className={header_label ? styles['form-item-full-main'] : styles['form-item-main']}>
             {MyComponent ? (
               <MyComponent
                 onChange={this.handleChange}
-                dispatch={dispatch}
+                dispatch={this.handleDispatch}
+                // subscribe仅在一些 业务组件/内嵌表单组件 中使用
+                subscribe={subscribe}
                 value={value}
                 input_props={input_props}
                 error={error}
-                path={path}
+                getValidFun={this.getChildrenValid}
               />
             ) : (
                 <strong>
@@ -127,14 +181,14 @@ export default class FormItem extends Component<FormItemProp, FormItemState>{
               )}
           </div>
           {unit !== "" ? (
-            <div className={styles['formItem-unit']}>
+            <div className={styles['form-item-unit']}>
               {unit}
             </div>
           ) : null}
         </div>
         {/* 基本的组件的error统一在这里做，复杂的放入业务组件中 */}
         {isBase(error) ? (
-          <div className={styles['formItem-error']}>
+          <div className={styles['form-item-error']}>
             {error}
           </div>
         ) : null}

@@ -2,6 +2,15 @@ import React, { Component, ReactNode } from 'react';
 import CheckboxWithExtra from '../Base/CheckboxWithExtra';
 import styles from './MultipleCheckbox.less';
 
+/**
+ * 外部数据格式应为
+ * {
+ *  a: boolean,
+ *  aNote: any,
+ *  b: boolean,
+ *  bNote: any
+ * }
+ */
 interface MultipleCheckboxProps {
   // extraEditors: Array<any>,
   radio?: boolean,

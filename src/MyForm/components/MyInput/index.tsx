@@ -10,18 +10,53 @@ interface MyInputProps {
   input_props: any
 }
 
-export default class MyInput extends React.Component<MyInputProps>{
+interface MyInputState {
+  value: any
+}
+
+export default class MyInput extends React.Component<MyInputProps, MyInputState>{
+
+  handleKeyDown = (e: any) => {
+    e.target.keyEvent = true;
+  }
+
+  handleKeyUp = (e: any) => {
+    const flag = e.target.isNeedPrevent;
+    if (flag) return;
+    this.props.onChange(this.state.value);
+    e.target.keyEvent = false;
+  }
+
+  handleCompositionStart = (e: any) => {
+    e.target.isNeedPrevent = true;
+  }
+
+  handleCompositionEnd = (e: any) => {
+    e.target.isNeedPrevent = false;
+  }
+
   handleChange = (e: any) => {
-    this.props.onChange(e.target.value)
+    // this.setState({value: e.target.value})
+    this.props.onChange(e.target.value);
   }
 
   renderInput = () => {
     const { input_props = "default" } = this.props;
     if (input_props) {
       if (input_props.type === "textarea") {
-        return <Input.TextArea value={this.props.value} onChange={this.handleChange} />
+        return (
+          <Input.TextArea
+            value={this.props.value}
+            onChange={this.handleChange}
+            // onKeyDown={this.handleKeyDown}
+            // onKeyUp={this.handleKeyUp}
+            // onCompositionStart={this.handleCompositionStart}
+            // onCompositionEnd={this.handleCompositionEnd}
+          />
+        )
       } else if (input_props.type === "password") {
         return <Input.Password value={this.props.value} onChange={this.handleChange} />
+
       } else if (input_props.type === "text") {
         return <Input value={this.props.value} onChange={this.handleChange} />
       }

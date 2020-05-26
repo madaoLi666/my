@@ -15,7 +15,7 @@ interface SimpleObjectProps {
 }
 
 const defaultGutterConfig = {
-  gutter: [0,16], // px
+  gutter: [0, 16], // px
   justify: "start"
 }
 
@@ -40,18 +40,17 @@ export default class SimpleObject extends Component<SimpleObjectProps> {
       const { span = 8, offset = 0 } = conf;
       const RenderComponent = MyComponent[conf.input_type];
       return (
-        <Col span={span} offset={offset} className={styles['simple-object-item']} key={`so-${index}`}>
+        <Col span={span} offset={offset} className={styles['simple-object-item']} key={`array-object-${index}`}>
           <div className={styles.label}>{conf.label}</div>
           <div className={styles.editor}>
-            <RenderComponent 
-              onChange={(val: any) => this.handleChange(val, conf.key)} 
+            <RenderComponent
+              onChange={(val: any) => this.handleChange(val, conf.key)}
               value={value[conf.key]}
               {...conf}
             />
           </div>
           <div className={styles.unit}>{conf.unit}</div>
-        </Col>  
-      
+        </Col>
       );
     });
   };
@@ -63,6 +62,6 @@ export default class SimpleObject extends Component<SimpleObjectProps> {
       >
         {this.renderInput()}
       </Row>
-      </div>;
+    </div>;
   }
 }

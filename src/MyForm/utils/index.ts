@@ -2,7 +2,7 @@
 /* eslint-disable object-shorthand */
 /* eslint-disable func-names */
 import { FormConfig } from '../interface';
-import { isBase, isArr, isObj, isNumber} from './func';
+import { isBase, isArr, isObj, isNumber, isUndefinend } from './func';
 
 const o: string = ".";
 const a: string = "_";
@@ -47,19 +47,21 @@ const rules = [
       // if(isBase(obj) === ONLYBASE) return {};
       const r: { [key: string]: any } = {};
       if (path === ALL) {
-        if (isObj(obj)) {
-          Object.keys(obj).forEach((key: string) => {
-            if (isBase(obj[key]) === ONLYBASE) {
-              r[`${history}.${key}`] = obj[key];
-            }
-          })
-        } else if (isArr(obj)) {
-          obj.forEach((v: any, index: number) => {
-            if (isBase(v) === ONLYBASE) {
-              r[`${history}_${index}`] = v;
-            }
-          })
-        }
+        // 取全部值暂时不处理 
+
+        // if (isObj(obj)) {
+        //   Object.keys(obj).forEach((key: string) => {
+        //     if (isBase(obj[key]) === ONLYBASE) {
+        //       r[`${history}.${key}`] = obj[key];
+        //     }
+        //   })
+        // } else if (isArr(obj)) {
+        //   obj.forEach((v: any, index: number) => {
+        //     if (isBase(v) === ONLYBASE) {
+        //       r[`${history}_${index}`] = v;
+        //     }
+        //   })
+        // }
       } else {
         if (isObj(obj)) {
           r[`${history}.${path}`] = obj[path];
@@ -111,10 +113,9 @@ const rules = [
  */
 function getData(obj: any, path: string, history: string): object {
   if (!path) { console.warn('path is undefined'); return {}; }
-  // if (path === ALL) {
-  //   console.log(obj);
-  //   return { [`.${path}`]: obj };
-  // }
+  if (path === ALL) {
+    return { [`.${path}`]: obj };
+  }
   if (isBase(obj)) { return {}; }
   let r = {};
   const oi = path.indexOf(o);
@@ -211,16 +212,15 @@ function _assign(mainData: any = {}, newData: any = {}): any {
           flag = true;
           // 判别下一层是不是数组，做数组合并
           if (isArr(mainData[mk]) && isArr(newData[nk])) {
-            const len = mainData[mk].length > newData[nk].length ?  mainData[mk].length : newData[nk].length;
+            const len = mainData[mk].length > newData[nk].length ? mainData[mk].length : newData[nk].length;
             for (let k = 0; k < len; k++) {
               mainData[mk][k] = _assign(mainData[mk][k], newData[nk][k])
             }
           } else if (isObj(mainData[mk]) && isObj(newData[mk])) {
             // default object
-            mainData[mk] = {
-              ...mainData[mk],
-              ...newData[nk]
-            }
+            mainData[mk] = _assign(mainData[mk], newData[nk]);
+          } else if (isUndefinend(mainData[mk])) {
+            mainData[mk] = newData[mk];
           }
         }
       }
@@ -231,6 +231,8 @@ function _assign(mainData: any = {}, newData: any = {}): any {
         }
       }
     }
+  } else if (isUndefinend(newData)) {
+    // mainData = newData;
   } else {
     console.error("其中一个参数不是对象||二者皆不为对象||两者数据类型不相同，不可以做合并操作");
   }
@@ -245,6 +247,11 @@ function _assign(mainData: any = {}, newData: any = {}): any {
 function toFormat(data: { [key: string]: any }): object {
   let r = {};
   Object.keys(data).forEach(key => {
+    // 合并 * 
+    if (key === `.${ALL}`) {
+      r = _assign(r, data[key]);
+      return;
+    }
     const oi = key.lastIndexOf(o);
     const ai = key.lastIndexOf(a);
     if (oi === ai) {

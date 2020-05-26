@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import MyComponent from "../index";
+import styles from './index.less';
 
 interface EditableCellProps {
   value: any;
@@ -54,9 +55,9 @@ export default class EditableCell extends Component<EditableCellProps> {
       <div
         onDoubleClick={this.handledbClick}
         onBlur={this.handleBlur}
-        style={{ width: "100%", minHeight: "100%" }}
+        className={styles['table-editable-cell']}
       >
-        {editing ? (
+        {editing || editor.input_type === 'checkbox' ? (
           <RenderComponent
             {...editor}
             onChange={(val: any) => this.handleChange(val)}

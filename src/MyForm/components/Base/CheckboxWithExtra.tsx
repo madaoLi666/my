@@ -37,7 +37,9 @@ export default class CheckboxWithExtra extends Component<CheckboxWithExtraProps>
       const RenderComponent = MyComponent[editor.input_type];
       return (
         <div key={index} className={styles['extra-editors']}>
-          <span className={styles['extra-editors-label']}>{editor.label}</span>
+          {editor.label ? (
+            <span className={styles['extra-editors-label']}>{editor.label}</span>
+          ) : null}
           <RenderComponent
             value={editorsValue === null ? null : editorsValue[index]}
             {...editor}
