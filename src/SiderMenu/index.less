@@ -1,0 +1,33 @@
+.menu-block {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  transition: left .5s;
+  z-index: 1;
+  
+  .menu {
+    padding: 12px;
+    background-color: #ffffff;
+    width: 250px;
+    height: 400px;
+    user-select: none;
+    border: 1px solid #d9d9d9;
+  }
+
+  .btn {
+    button {
+      width: 30px;
+      height: 85px;
+      padding: 0;
+      padding-top: 2px;
+      // border-bottom-right-radius: 14px;
+      // border-top-right-radius: 14px;
+      > span {
+        font-size: 14px;
+        text-align: justify;
+        writing-mode: vertical-rl;
+        letter-spacing: 4px;
+      }
+    }
+  }
+}

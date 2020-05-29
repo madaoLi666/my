@@ -6,7 +6,10 @@ import { isBase, isArr, isObj, isNumber, isUndefinend } from './func';
 
 const o: string = ".";
 const a: string = "_";
+const extra: RegExp = /\((.*)\)/;  // 用于匹配额外提取的同一层的key
+const origin: RegExp = /(.*)\(/;   // 用于匹配(前的字符
 const ALL: string = "*";
+
 // 只提取基本数据类型
 const ONLYBASE: boolean = false;
 
@@ -64,7 +67,17 @@ const rules = [
         // }
       } else {
         if (isObj(obj)) {
-          r[`${history}.${path}`] = obj[path];
+          // keyNote转换
+          if (extra.test(path)) {
+            const extraKey = extra.exec(path)[1];
+            const originKey = origin.exec(path)[1];
+            r[`${history}.${path}`] = (extraKey !== null && originKey !== null) ? {
+              [originKey]: obj[originKey],
+              [originKey + extraKey]: obj[originKey + extraKey]
+            } : {}
+          } else {
+            r[`${history}.${path}`] = obj[path];
+          }
         } else if (isArr(obj) && isNumber(path)) {
           r[`${history}_${path}`] = obj[Number(path)];
         }
@@ -144,8 +157,6 @@ export function loopPath(obj: any, pathArr: Array<string>): object {
   return r;
 }
 
-
-
 /**
  * 获取render所需的data结构
  */
@@ -153,12 +164,11 @@ export function getRenderData(config: Array<FormConfig>, data: any): Array<FormC
   if (!data) {
     return config;
   }
-  const rConfig: Array<FormConfig> = config.map(v => v);
   const cData: { [key: string]: any } = loopPath(data, config.map(v => v.key));
-  for (let i = 0; i < rConfig.length; i++) {
-    rConfig[i].value = cData[rConfig[i].key];
+  for (let i = 0; i < config.length; i++) {
+    config[i].value = cData[config[i].key];
   }
-  return rConfig;
+  return config;
 }
 
 /* ============================== 本地格式转为接口格式 ==================================== */
@@ -175,7 +185,16 @@ function newObj(parentKey: string, currentKey: string, data: any) {
       r = [];
       r[Number(currentKey)] = data;
     } else {
-      r[currentKey] = data;
+      if (extra.test(currentKey)) {
+        const originKey = origin.exec(currentKey)[1];
+        const extraKey = extra.exec(currentKey)[1];
+        if (originKey !== null && extraKey !== null) {
+          r[originKey] = data[originKey];
+          r[originKey + extraKey] = data[originKey + extraKey];
+        }
+      } else {
+        r[currentKey] = data;
+      }
     }
   } else {
     if (isNumber(currentKey)) {
@@ -186,8 +205,18 @@ function newObj(parentKey: string, currentKey: string, data: any) {
     } else {
       const g: { [key: string]: any } = {};
       g[parentKey] = {};
-      g[parentKey][currentKey] = data;
-      r = _assign(r, toFormat(g));
+      if (extra.test(currentKey)) {
+        const originKey = origin.exec(currentKey)[1];
+        const extraKey = extra.exec(currentKey)[1];
+        if (originKey !== null && extraKey !== null) {
+          g[parentKey][originKey] = data[originKey];
+          g[parentKey][originKey + extraKey] = data[originKey + extraKey];
+        }
+        r = _assign(r, g);
+      } else {
+        g[parentKey][currentKey] = data;
+        r = _assign(r, toFormat(g));
+      }
     }
   }
   return r;

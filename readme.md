@@ -7,5 +7,9 @@
 #### CircleProgress(完成)
 基于Canvas实现圆环形进度条，以后可以发展为佛祖头上的光盘
 
-#### Editing(挂起)
-不知道在干什么
+#### FloatDraggableCard(完成)
+可拖拽浮动卡
+
+#### SiderMenu(完成)
+侧栏菜单（left需要内部预设）
+

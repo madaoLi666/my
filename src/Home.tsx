@@ -4,12 +4,13 @@ import config from './localdata/config';
 import data from './localdata/data';
 import styles from './Home.less';
 
-import { getRenderData, getFormData} from '@/MyForm/utils';
+import { getRenderData, getFormData} from './MyForm/utils';
 
 interface HomeState{
   formHandler:{
     [key:string]: any
-  }
+  },
+  data: any
 }
 
 
@@ -19,17 +20,24 @@ export default class Home extends React.Component<{},HomeState>{
     this.state = {
       formHandler: {
         
-      }
+      },
+      data: data
     }
   }
 
+  componentDidMount(){
+    setTimeout(() => {
+      this.setState({data:{
+        g: {
+          a: false,
+          aNote: ""
+        }
+      }})
+    },500)
+  }
 
   componentDidUpdate(){
-    const { formHandler } = this.state;
-    formHandler.subscribe("lmp", "change", (val: any) => {
-      formHandler['sureEdd'].actions.setValue("2020-01-01");
-    });
-    // console.log(formHandler);
+
   }
 
 
@@ -43,7 +51,9 @@ export default class Home extends React.Component<{},HomeState>{
   }
 
   render(){
+    const { data } = this.state;
     const myConfig = getRenderData(config, data);
+    console.log(myConfig);
     // 不要再页面render中尝试取formHandler的值，因为这个时候formItem初始化还没有完成
     return(
       <div className={styles.container}>
