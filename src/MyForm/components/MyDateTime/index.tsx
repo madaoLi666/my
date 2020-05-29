@@ -37,7 +37,7 @@ export default function MyDateTime(props: MyDatePickerProp) {
       const val:any = value ? moment(value, format) : "";
       if (type === dateTypeString) {
         return <DatePicker
-          size="small"
+          
           value={val}
           format={format}
           onChange={handleChange}
@@ -45,7 +45,7 @@ export default function MyDateTime(props: MyDatePickerProp) {
       }
       if (type === timeTypeString) {
         return <TimePicker
-          size="small"
+          
           value={val}
           format={format}
           onChange={handleChange}

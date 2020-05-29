@@ -1,10 +1,10 @@
-@normalInputHeight: 24px;
+@normalInputHeight: 32px;
 @normalFontSize: 14px;
 @labelPaddingRight: 5px;
 
 @labelColor:rgba(0,0,0,.85);
 @formItemLabelWidth: 120px;
-@formItemUnitWidth: 60px;
+@formItemUnitWidth: 45px;
 
 @labelLineColor: #f0f0f0;
 @backgroundColor: #ffffff;
@@ -12,6 +12,7 @@
 
 .my-form {
   width: 90%;
+  padding: 1rem 0;
   margin: 0 auto;
   background-color: @backgroundColor;
   #components-select-demo-search-box .code-box-demo .ant-select {
@@ -21,5 +22,6 @@
   // 用于custom类的组件沾满width
   .my-form {
     width: 100% !important;
+    padding: 0;
   }
 }

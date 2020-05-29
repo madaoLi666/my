@@ -65,12 +65,14 @@ export interface FormConfig {
 
 export interface MyFormProp {
   config: Array<FormConfig>,
+  value: any,
   getFormHandler?: (func: any) => void,
   submitChange: boolean
 }
 
 export interface MyFormState {
-  formHandler: any
+  formHandler: any,
+  myConfig: Array<FormConfig>
 }
 
 export interface FormItemProp {
@@ -80,6 +82,7 @@ export interface FormItemProp {
     valid?: () => any,
     reset?: () => void
   },
+  getActions: Function,
   dispatch: (fieldName: string, eventName: string, args: any) => void,
   subscribe: (fieldName: string, eventName: string, cb: Function) => void
   value?: any,
@@ -92,7 +95,7 @@ export interface FormItemProp {
   path: string,
   name: string,
   // 置为hidden 不可被修改与重置
-  hidden:boolean
+  hidden:boolean,
 }
 export interface FormItemState {
   value: any,

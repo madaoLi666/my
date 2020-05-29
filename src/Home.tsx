@@ -4,13 +4,14 @@ import config from './localdata/config';
 import data from './localdata/data';
 import styles from './Home.less';
 
-import { getRenderData, getFormData} from './MyForm/utils';
+import { getFormData} from './MyForm/utils';
 
 interface HomeState{
   formHandler:{
     [key:string]: any
   },
-  data: any
+  data: any,
+  config: any
 }
 
 
@@ -21,49 +22,72 @@ export default class Home extends React.Component<{},HomeState>{
       formHandler: {
         
       },
-      data: data
+      data: data,
+      config: config
     }
-  }
-
-  componentDidMount(){
-    setTimeout(() => {
-      this.setState({data:{
-        g: {
-          a: false,
-          aNote: ""
-        }
-      }})
-    },500)
   }
 
   componentDidUpdate(){
 
   }
 
+  changeData = () => {
+    this.setState({
+      data: {
+        g:{
+          id: 8,
+          a: "12",
+          aNote: "14"
+        }
+      }
+    })
+  }
+
+  changeConfig = () => {
+    this.setState({
+      config: [
+        {
+          name: "g", key: ".g", input_type: "custom", span: 24,
+          header_label: true,
+          label: "G",
+          input_props: {
+            config: [
+              {name: "id", key: ".id", input_type: "input", span: 6, hidden: true},
+              {name: "b", key: ".b", input_type: "input", label: "测试输入3", span: 6,},
+              {name: "bNote", key: ".bNote", input_type: "input", label: "测试输入4", span: 6,}
+            ]
+          }
+        }
+      ]
+    })
+  }
 
   handleSubmit = () => {
     this.state.formHandler.submit().then(({validCode, res}:any) => {
-      console.log(res);
       console.log(getFormData(res));
-      // if(!validCode){
-      // }
     });
   }
 
   render(){
-    const { data } = this.state;
-    const myConfig = getRenderData(config, data);
-    console.log(myConfig);
-    // 不要再页面render中尝试取formHandler的值，因为这个时候formItem初始化还没有完成
+    const { data, config } = this.state;
+    console.log(this.state.formHandler);
     return(
       <div className={styles.container}>
         <MyForm
-          config={myConfig}
+          config={config}
+          value={data}
           getFormHandler={(formHandler:any) => this.setState({formHandler})}
           submitChange={false}
         />
         <button
-          // onClick={() => this.state.formHandler.submit()}
+          onClick={this.changeConfig}
+          type="button"
+        >改变配置</button>
+        <button
+          onClick={this.changeData}
+          type="button"
+        >改变数据</button>
+        <button
           type="button"
           onClick={this.handleSubmit}
         >提交</button>

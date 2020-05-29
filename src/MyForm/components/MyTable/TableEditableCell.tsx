@@ -51,6 +51,14 @@ export default class EditableCell extends Component<EditableCellProps> {
     if (editor) {
       RenderComponent = MyComponent[editor.input_type];
     }
+    const getLabel = () => {
+      if (editor.input_type === 'select' && value) {
+        const options = editor.input_props.options;
+        const opt = options.filter(item => item.value === value).pop();
+        return opt.label;
+      }
+      return value;
+    }
     return (
       <div
         onDoubleClick={this.handledbClick}
@@ -65,7 +73,7 @@ export default class EditableCell extends Component<EditableCellProps> {
           />
         ) : (
           // 如value为空，渲染为"-"
-          <span>{value || "-"}</span>
+          <span>{getLabel()}</span>
         )}
       </div>
     );

@@ -23,7 +23,7 @@ const MyComponent:MyComponent = {
   "checkbox": MyCheckbox,
   "table": MyTable,
 
-  "simpleobject": SimpleObject,
+  "simple-object": SimpleObject,
 
   "custom": MyCustom,
   "array-custom": ArrayCustom,

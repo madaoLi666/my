@@ -2,32 +2,17 @@ import { FormConfig } from '../MyForm/interface';
 
 const config: Array<FormConfig> = [
   {
-    name: "t",
-    key: ".g.a(Note)",
-    label: "tNote",
-    input_type: "checkbox",
+    name: "g", key: ".g", input_type: "custom", span: 24,
+    header_label: true,
+    label: "G",
     input_props: {
-      type: "custom",
-      renderData: [
-        {
-          key: "a",
-          label: "",
-          options: [
-            {label: "有", value: true},
-            {label: "无", value: false},
-          ],
-          extraEditors: [
-            {
-              key: true,
-              editors: [{
-                key: "", name: "", input_type: "input"
-              }]
-            }
-          ]
-        }
+      config: [
+        {name: "id", key: ".id", input_type: "input", span: 6, hidden: true},
+        {name: "a", key: ".a", input_type: "input", label: "测试输入1", span: 6,},
+        {name: "aNote", key: ".aNote", input_type: "input", label: "测试输入2", span: 6,}
       ]
     }
-  },
+  }
   // {
   //   name: "chiefComplaint",
   //   key: '.a',

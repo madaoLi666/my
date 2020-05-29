@@ -77,7 +77,7 @@ export default class AddressCascader extends Component<AddressCascaderProps> {
           <Col span={6}>
             <Select
               style={{width: '100%'}}
-              size="small"
+              
               options={data.streetOptions}
               onChange={(val: Array<string>, option) => this.handleChange(option, 1)}
               value={data.streetData}

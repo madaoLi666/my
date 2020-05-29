@@ -20,52 +20,12 @@ export default class FormItem extends Component<FormItemProp, FormItemState>{
       path: "",
       validate: [],
     }
-    const self = this;
-    if (props.actions) {
-      props.actions.getValue = function getValue() {
-        // 可以考虑在这个位置做一个拦截提交
-        if(self.state.path === ".*" && props.input_props.type === "custom"){
-          const key = props.input_props.renderData[0].key;
-          return {
-            value: {
-              [key]: self.state.value[key],
-              [`${key}Note`]: self.state.value[`${key}Note`]
-            },
-            path: self.state.path
-          }
-        }
-        return {
-          value: self.state.value,
-          path: self.state.path
-        }
-      };
-      props.actions.setValue = function setValue(val) {
-        self.setState({ value: val });
-      }
-      props.actions.reset = function reset() {
-        if(props.hidden){
-          return;
-        }
-        if(isObj(self.state.value)){
-          self.setState({ value: {} },() => {
-          });
-        }else if(isArr(self.state.value)){
-          self.setState({ value: [] });
-        }else{
-          self.setState({ value: null });
-        }
-      }
-      props.actions.valid = function valid() {
-        const error = validFun(self.state.value, props.validate || "");
-        // childrenError boolean
-        let childrenError: any = true;
-        if(props.type.indexOf("custom") !== -1){
-          childrenError = self.childrenValid();
-        }
-        self.setState({ error });
-        return isEmpty(error) && childrenError;
-      }
-    }
+    this.props.getActions({
+      getValue: this.getValue,
+      setValue: this.setValue,
+      reset: this.reset,
+      valid: this.valid
+    })
   }
 
   componentDidMount() {
@@ -74,8 +34,14 @@ export default class FormItem extends Component<FormItemProp, FormItemState>{
       validate: this.props.validate || "",
       path: this.props.path
     });
+    this.props.getActions({
+      getValue: this.getValue,
+      setValue: this.setValue,
+      reset: this.reset,
+      valid: this.valid
+    })
   }
-  
+
   // 外部页面更新引发
   componentDidUpdate(prevProps: FormItemProp) {
     if (JSON.stringify(this.props) !== JSON.stringify(prevProps)) {
@@ -85,6 +51,12 @@ export default class FormItem extends Component<FormItemProp, FormItemState>{
         validate: this.props.validate || "",
         path: this.props.path
       });
+      this.props.getActions({
+        getValue: this.getValue,
+        setValue: this.setValue,
+        reset: this.reset,
+        valid: this.valid
+      })
     }
   }
 
@@ -120,8 +92,6 @@ export default class FormItem extends Component<FormItemProp, FormItemState>{
     dispatch(name, eventName, args);
   }
 
-
-
   // 渲染required星号
   renderAsterisk = (validate: string | object | RegExp | null): ReactNode => {
     let isRender = false;
@@ -131,11 +101,43 @@ export default class FormItem extends Component<FormItemProp, FormItemState>{
     return isRender ? <span style={{ color: 'red' }}>*</span> : null
   }
 
-  // renderHeader = () => {
-  //   const { header_label, label } = this.props;
-  //   const { validate } = this.state;
-  //   return 
-  // }
+  // 以下方法暴露给父类
+  getValue = () => {
+    return {
+      value: this.state.value,
+      path: this.state.path
+    }
+  }  
+  
+  setValue = (val: any) => {
+    this.setState({ value: val });
+  }
+
+  reset = () => {
+    if(!this.props.hidden){
+      if(isObj(this.state.value)){
+        this.setState({ value: {} },() => {
+        });
+      }else if(isArr(this.state.value)){
+        this.setState({ value: [] });
+      }else{
+        this.setState({ value: null });
+      }
+    }
+  }
+
+  valid = () => {
+    // 原本的验证
+    const error = validFun(this.state.value, this.props.validate || "");
+    // childrenError boolean
+    let childrenError: any = true;
+    if(this.props.type.indexOf("custom") !== -1){
+      // 从组件中传出
+      childrenError = this.childrenValid();
+    }
+    this.setState({ error });
+    return isEmpty(error) && childrenError;
+  }
 
   render() {
     const { subscribe, type, label, input_props, unit, header_label } = this.props;

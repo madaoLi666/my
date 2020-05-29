@@ -111,7 +111,7 @@ export default class MultipleSelect extends Component<MultipleSelectProps>{
     return (
       <div>
         <Select
-          size="small"
+          
           style={{ width: "100%" }}
           value={selectValue}
           allowClear

@@ -25,7 +25,7 @@ export default class DefaultSelect extends Component<DefaultSelectProps>{
     //   onChange(val);
     // }
   }
-  
+
   renderOptions = (options: Array<{label:string|number,value:string|number}>) => {
     return  options.map((opt: {label: string|number,value: string|number}) => (
       <Option
@@ -34,7 +34,7 @@ export default class DefaultSelect extends Component<DefaultSelectProps>{
       >{opt.label}</Option>
     ))
   }
-  
+
   render(){
     const { options = [], multiple } = this.props;
     let { value = (multiple? [] : "") } = this.props;
@@ -42,8 +42,8 @@ export default class DefaultSelect extends Component<DefaultSelectProps>{
       value = [];
     }
     return (
-      <Select 
-        size="small"
+      <Select
+        
         style={{width: "100%"}}
         value={value}
         allowClear

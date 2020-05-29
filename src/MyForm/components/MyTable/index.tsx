@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import React, { Component } from "react";
 import { Table, Button } from "antd";
+import { get, set } from 'lodash';
 import EditableCell from './TableEditableCell';
 import { isArr } from '../../utils/func';
 import styles from './index.less';
@@ -45,9 +46,10 @@ export default class MyTable extends Component<MyTableProps,MyTableState> {
   }
 
   handleEdit = (val: any, key: string, index: number) => {
-    const { onChange } = this.props;
+    const { onChange, dispatch } = this.props;
     const { dataSource } = this.state;
-    dataSource[index][key] = val;
+    set(dataSource[index], key, val);
+    dispatch('tableEdit', dataSource[index]);
 
     /**
      * TODO
@@ -104,7 +106,7 @@ export default class MyTable extends Component<MyTableProps,MyTableState> {
           dataIndex: v.key,
           render: (text: string, record: any, index: number) => editable ? (
             <EditableCell
-              value={text}
+              value={get(record ,v.key)}
               onChange={(val: any) => this.handleEdit(val, v.key, index)}
               editor={v.editor}
             />

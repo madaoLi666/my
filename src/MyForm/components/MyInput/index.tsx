@@ -1,7 +1,7 @@
 /* eslint-disable no-else-return */
 /* eslint-disable @typescript-eslint/camelcase */
 import React from 'react';
-import { Input } from 'antd';
+import { Input, InputNumber } from 'antd';
 
 interface MyInputProps {
   onChange: Function,
@@ -15,6 +15,10 @@ interface MyInputState {
 }
 
 export default class MyInput extends React.Component<MyInputProps, MyInputState>{
+
+  state = {
+    value: ""
+  }
 
   handleKeyDown = (e: any) => {
     e.target.keyEvent = true;
@@ -40,6 +44,10 @@ export default class MyInput extends React.Component<MyInputProps, MyInputState>
     this.props.onChange(e.target.value);
   }
 
+  handleNumberChange = (value: any) => {
+    this.props.onChange(value);
+  }
+
   renderInput = () => {
     const { input_props = "default" } = this.props;
     if (input_props) {
@@ -59,6 +67,8 @@ export default class MyInput extends React.Component<MyInputProps, MyInputState>
 
       } else if (input_props.type === "text") {
         return <Input value={this.props.value} onChange={this.handleChange} />
+      } else if(input_props.type === "number") {
+        return <InputNumber value={this.props.value} onChange={this.handleNumberChange} />
       }
     }
     return <Input value={this.props.value} onChange={this.handleChange} />
