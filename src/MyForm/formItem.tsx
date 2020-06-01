@@ -20,12 +20,13 @@ export default class FormItem extends Component<FormItemProp, FormItemState>{
       path: "",
       validate: [],
     }
-    this.props.getActions({
-      getValue: this.getValue,
-      setValue: this.setValue,
-      reset: this.reset,
-      valid: this.valid
-    })
+    // console.log("FormItem constructor");
+    // this.props.getActions({
+    //   getValue: this.getValue,
+    //   setValue: this.setValue,
+    //   reset: this.reset,
+    //   valid: this.valid
+    // })
   }
 
   componentDidMount() {

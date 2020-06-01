@@ -33,42 +33,41 @@ export default class MyForm extends Component<MyFormProp, MyFormState>{
     })
   }
 
-  componentWillUpdate(nextProps: MyFormProp, nextState: MyFormState) {
-    const { config, value, submitChange } = nextProps;
-    console.log('componentWillUpdate');
-    if (JSON.stringify(this.props.config) !== JSON.stringify(nextProps.config)
-      || JSON.stringify(this.props.value) !== JSON.stringify(nextProps.value)
-    ) {
-      console.log('update formHandler');
-      console.log(value);
+  // componentWillUpdate(nextProps: MyFormProp, nextState: MyFormState) {
+  //   const { config, value, submitChange } = nextProps;
+  //   if (JSON.stringify(this.props.config) !== JSON.stringify(nextProps.config)
+  //     || JSON.stringify(this.props.value) !== JSON.stringify(nextProps.value)
+  //   ) {
+  //     this.setState({
+  //       myConfig: getRenderData(config, value),
+  //       formHandler: createFormHandler(getRenderData(config, value), { submitChange })
+  //     })
+  //     return true;
+  //   }
+  //   return false;
+  // }
+
+  // 没有新建formHandler 只是增加了其中的键值
+  componentDidUpdate(prevProps: MyFormProp, prevState: MyFormState) {
+    const { getFormHandler, config, value, submitChange } = this.props;
+    if (!this.props.config || !this.props.value) {
+      return;
+    }
+    // 数据不同
+    if (JSON.stringify(this.props.value) !== JSON.stringify(prevProps.value)) {
+      this.setState({ myConfig: getRenderData(config, value) })
+    }
+    // 配置不同
+    if (JSON.stringify(this.props.config) !== JSON.stringify(prevProps.config)) {
       this.setState({
         myConfig: getRenderData(config, value),
         formHandler: createFormHandler(getRenderData(config, value), { submitChange })
       })
-      return true;
     }
-    return false;
-  }
-
-  // 没有新建formHandler 只是增加了其中的键值
-  componentDidUpdate(prevProps: MyFormProp) {
-    console.log('componentDidUpdate');
-    const { getFormHandler, config, value } = this.props;
-    if (!this.props.config || !this.props.value) {
-      return;
-    }
-    if (JSON.stringify(this.props.config) !== JSON.stringify(prevProps.config)
-      || JSON.stringify(this.props.value) !== JSON.stringify(prevProps.value)
-    ) {
-      console.log('throw the formHandler');
-      // this.setState({
-      //   myConfig: getRenderData(config, value),
-        // formHandler: createFormHandler(getRenderData(config, value), { submitChange })
-      // },() => {
-        if (getFormHandler) {
-          getFormHandler(this.state.formHandler); 
-        }
-      // })
+    if (JSON.stringify(prevState.formHandler.uuid) !== JSON.stringify(this.state.formHandler.uuid)) {
+      if (getFormHandler) {
+        getFormHandler(this.state.formHandler);
+      }
     }
   }
 
@@ -145,10 +144,7 @@ export default class MyForm extends Component<MyFormProp, MyFormState>{
 
   handlerGetActions = (name: string, actions: any) => {
     const { formHandler } = this.state;
-    console.log('set actions for formHandler');
-    console.log(name);
-    // console.log(actions);
-    if(!formHandler[name] || !formHandler[name].actions){
+    if (!formHandler[name] || !formHandler[name].actions) {
       formHandler[name] = {};
       formHandler[name].actions = {};
     }

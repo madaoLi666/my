@@ -35,8 +35,9 @@ export default class MyCustom extends Component<MyCustomProps, MyCustomState>{
   componentDidUpdate(prevProps: MyCustomProps, prevStata: MyCustomState) {
     const { formHandler, isSubscribe } = this.state;
     const { onChange, subscribe } = this.props;
-    // TODO 暂时先这样去处理subscribe队列的情况，以后再重构
-    if (!isSubscribe) {
+    if (JSON.stringify(this.props.input_props.config) !== JSON.stringify(prevProps.input_props.config)
+      || this.state.formHandler.uuid !== prevStata.formHandler.uuid
+    ){
       if (subscribe) {
         subscribe("_global", "reset", () => {
           formHandler.reset();
@@ -50,10 +51,13 @@ export default class MyCustom extends Component<MyCustomProps, MyCustomState>{
           })
         });
       }
-      if (subscribe && JSON.stringify(formHandler) !== "{}") {
-        this.setState({ isSubscribe: true });
-      }
     }
+    // TODO 暂时先这样去处理subscribe队列的情况，以后再重构
+    // if (!isSubscribe) {
+    //   if (subscribe && JSON.stringify(formHandler) !== "{}") {
+    //     this.setState({ isSubscribe: true });
+    //   }
+    // }
     if (this.props.getValidFun) {
       this.props.getValidFun(formHandler.valid);
     }
@@ -62,7 +66,6 @@ export default class MyCustom extends Component<MyCustomProps, MyCustomState>{
   render() {
     const { config = [] } = this.props.input_props;
     const { value = {} } = this.props;
-    console.log(this.state.formHandler);
     return (
       <div style={{ marginTop: "16px" }}>
         <MyForm

@@ -145,6 +145,6 @@ export function createFormHandler(config, {submitChange}){
   formHandler.dispatch = dispatch;
   formHandler.cleanSubscriptions = cleanSubscriptions;
   formHandler.formState = formState;
-  formHandler.eventCallBacks = eventCallBacks;
+  formHandler.uuid = Math.random();
   return formHandler;
 }

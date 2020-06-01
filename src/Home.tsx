@@ -28,7 +28,7 @@ export default class Home extends React.Component<{},HomeState>{
   }
 
   componentDidUpdate(){
-
+    console.log("Home componentDidUpdate");
   }
 
   changeData = () => {
@@ -70,7 +70,6 @@ export default class Home extends React.Component<{},HomeState>{
 
   render(){
     const { data, config } = this.state;
-    console.log(this.state.formHandler);
     return(
       <div className={styles.container}>
         <MyForm
