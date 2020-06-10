@@ -152,7 +152,7 @@ export default class MyCheckbox extends Component<MyCheckboxProps, any> {
       const { options = [], radio = true } = input_props;
       // 现在只做单选的，多选格式确定下来再做
       const handleChange = (val: Array<any>): void => {
-        if (val.length !== 0) {
+        if (val.length && val.length !== 0) {
           if (radio) {
             onChange(val[0]);
           } else {
@@ -160,7 +160,7 @@ export default class MyCheckbox extends Component<MyCheckboxProps, any> {
             // onChange(val[0]);
           }
         } else {
-          onChange("");
+          onChange(val);
         }
       }
       return (

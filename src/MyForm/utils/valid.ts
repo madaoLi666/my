@@ -23,7 +23,9 @@ function isRegExp(data: any): boolean {
 
 const errorText: { [key: string]: string } = {
   "required": "此输入值不可为空",
-  "number": "请输入数字"
+  "number": "请输入数字",
+  "chinaID": "请输入格式正确的中国居民身份证",
+  "telephone": "请输入正确的手机号码"
 }
 
 const validateRules: ValidateRule = {
@@ -32,6 +34,13 @@ const validateRules: ValidateRule = {
   },
   "number": function (val: any): boolean {
     return /^[0-9]+$/.test(val);
+  },
+  "chinaID": function (val: any): boolean {
+    return /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/.test(val);
+  },
+  "telephone": function (val: any): boolean {
+    // return /^((\+|00)86)?((134\d{4})|((13[0-3|5-9]|14[1|5-9]|15[0-9]|16[2|5|6|7]|17[0-8]|18[0-9]|19[0-2|5-9])\d{8}))$/.test(val);
+    return /^((134\d{4})|((13[0-3|5-9]|14[1|5-9]|15[0-9]|16[2|5|6|7]|17[0-8]|18[0-9]|19[0-2|5-9])\d{8}))$/.test(val);
   }
 }
 

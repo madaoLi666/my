@@ -1,10 +1,10 @@
 @import './index.less';
 
-.form-item{
+.form-item {
   display: flex;
   flex-direction: row;
   width: 100%;
-  margin: @normalInputHeight/8 0;
+  margin: @normalInputHeight / 8 0;
   // 这个时常规Input的高度
   line-height: @normalInputHeight;
 
@@ -14,11 +14,12 @@
     // display: flex;
     // flex-direction: row-reverse;
     width: @formItemLabelWidth;
+
     > label {
       padding-right: @labelPaddingRight;
       height: @normalInputHeight;
       line-height: @normalInputHeight;
-      color: rgba(0,0,0,.85);
+      // color: rgba(0,0,0,.85);
       font-size: @normalFontSize;
       text-align: right;
     }
@@ -35,19 +36,28 @@
     input:not(textarea) {
       height: @normalInputHeight;
     }
+
+    // 覆盖原有样式
+    // input,
+    // textear {
+    // }
+
+    .ant-select-selection-item,
+    .ant-cascader-picker-label,
+    .ant-radio-wrapper,
+    .ant-checkbox-wrapper {
+    }
   }
 
   .form-item-full-main {
     width: 100%;
   }
 
-  .form-item-unit{
+  .form-item-unit {
     padding-left: 5px;
     width: @formItemUnitWidth;
     text-align: left;
   }
-
-
 }
 
 .form-item-header-label {
@@ -55,7 +65,7 @@
   width: 100%;
   > h1 {
     line-height: @normalInputHeight;
-    color: @labelColor;
+    color: #000000;
     font-size: 16px;
     margin: 0;
     padding-left: @formItemLabelWidth / 2;
@@ -70,10 +80,10 @@
   }
 }
 
-.form-item-error{
+.form-item-error {
   margin-left: @formItemLabelWidth;
   // 减去label和unit的值
-  width: calc( 100% - @formItemLabelWidth);
+  width: calc(100% - @formItemLabelWidth);
   text-align: left;
   color: red;
 }

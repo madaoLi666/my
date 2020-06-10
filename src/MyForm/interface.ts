@@ -31,7 +31,7 @@ export interface ComponentOption {
     value: string | number | boolean,
     label: string | number | boolean
   }>,
-
+  tags?: boolean,
   // date
   format?: string,
   // checkbox | select 公用

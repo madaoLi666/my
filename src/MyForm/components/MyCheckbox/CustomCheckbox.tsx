@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from 'react';
 import CheckboxWithExtra from '../Base/CheckboxWithExtra';
-import styles from './CustomCheckbox.less';
+import './CustomCheckbox.less';
 
 /**
  * 这个类型本来就是互斥的
@@ -62,7 +62,7 @@ export default class CustomCheckbox extends Component<CustomCheckboxProps>{
   }
 
   render() {
-    return <div className={styles['custom-checkbox']}>
+    return <div className='custom-checkbox'>
       {this.renderCheckbox()}
     </div>
   }

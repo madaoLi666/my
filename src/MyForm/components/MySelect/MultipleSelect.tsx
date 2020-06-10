@@ -3,6 +3,8 @@ import React, { Component, ReactNode } from 'react';
 import { Select } from 'antd';
 import MyComponent from '../index';
 
+// 待额外输入器的输入框
+
 const { Option } = Select;
 
 interface MultipleSelectProps {
@@ -20,9 +22,6 @@ interface MultipleSelectProps {
 }
 
 export default class MultipleSelect extends Component<MultipleSelectProps>{
-
-
-  
 
   handleSelectChange = (val: any): void => {
     const { value, onChange } = this.props;

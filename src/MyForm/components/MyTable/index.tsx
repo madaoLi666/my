@@ -4,7 +4,7 @@ import { Table, Button } from "antd";
 import { get, set } from 'lodash';
 import EditableCell from './TableEditableCell';
 import { isArr } from '../../utils/func';
-import styles from './index.less';
+import './index.less';
 
 /* ============================================================================= */
 interface MyTableProps {
@@ -77,10 +77,11 @@ export default class MyTable extends Component<MyTableProps,MyTableState> {
 
   handleDelete = () => {
     const { selectedRowKeys, dataSource } = this.state;
+    const newDataSource = JSON.parse(JSON.stringify(dataSource));
     selectedRowKeys.forEach((key: number|string) => {
-      for(let i = 0 ; i < dataSource.length ; i++){
-        if(key === dataSource[i]._key){
-          dataSource.splice(i,1);
+      for(let i = 0 ; i < newDataSource.length ; i++){
+        if(key === newDataSource[i]._key){
+          newDataSource.splice(i,1);
           break;
         }
       }
@@ -89,7 +90,7 @@ export default class MyTable extends Component<MyTableProps,MyTableState> {
     // for(let i = 0 ; i < dataSource.length ; i++){
     //   delete dataSource[i]._key;
     // }
-    this.props.onChange(dataSource);
+    this.props.onChange(newDataSource);
   }
 
   handleRowSelectChange = (selectedRowKeys: Array<number|string>):void => {
@@ -134,7 +135,7 @@ export default class MyTable extends Component<MyTableProps,MyTableState> {
     const rowSelection = {
       selectedRowKeys: this.state.selectedRowKeys,
       onChange: this.handleRowSelectChange
-    }
+    };
     return (
       <div>
         { editable && !hiddenBtn && (
@@ -149,7 +150,7 @@ export default class MyTable extends Component<MyTableProps,MyTableState> {
         </div>
         )}
         <Table
-          className={styles['my-table']}
+          className='my-table'
           rowSelection={editable && !hiddenBtn ? rowSelection : undefined}
           columns={tableColumns || []}
           dataSource={dataSource || []}

@@ -12,6 +12,8 @@ import ArrayCustom from './MyCustom/ArrayCustom'
 import AddressCascader from './business/Address/AddressCascader';
 // import AddressCascader from './business/CascaderAddress';
 
+import MyCascader from './MyCascader';
+
 interface MyComponent{
   [key:string]: any
 }
@@ -22,6 +24,7 @@ const MyComponent:MyComponent = {
   "select": MySelect,
   "checkbox": MyCheckbox,
   "table": MyTable,
+  "cascader": MyCascader,
 
   "simple-object": SimpleObject,
 

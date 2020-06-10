@@ -1,6 +1,7 @@
 import React,{ Component} from 'react';
 import { Select } from 'antd';
-// import { isArr } from '../../utils/func';
+
+// 普通输入框
 
 const { Option } = Select;
 
@@ -11,7 +12,8 @@ interface DefaultSelectProps {
     label: string|number,
     value: string|number
   }>,
-  multiple: boolean
+  multiple: boolean,
+  tags: boolean
 }
 
 export default class DefaultSelect extends Component<DefaultSelectProps>{
@@ -36,19 +38,23 @@ export default class DefaultSelect extends Component<DefaultSelectProps>{
   }
 
   render(){
-    const { options = [], multiple } = this.props;
+    const { options = [], multiple, tags = false } = this.props;
     let { value = (multiple? [] : "") } = this.props;
     if(multiple && value === ""){
       value = [];
     }
+    let selectMode: string;
+    if(multiple){ 
+      selectMode = "multiple";
+      if(tags){ selectMode = "tags";}
+    }
     return (
       <Select
-        
         style={{width: "100%"}}
         value={value}
         allowClear
         showSearch
-        mode={multiple ? "multiple" : undefined}
+        mode={selectMode}
         onChange={this.handleChange}
       >
         {this.renderOptions(options)}

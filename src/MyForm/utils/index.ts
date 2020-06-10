@@ -10,166 +10,145 @@ const extra: RegExp = /\((.*)\)/;  // 用于匹配额外提取的同一层的key
 const origin: RegExp = /(.*)\(/;   // 用于匹配(前的字符
 const ALL: string = "*";
 
-// 只提取基本数据类型
-const ONLYBASE: boolean = false;
+const OBJECT_KEY = ".";
+const PLUS_KEY = "+";
+// 考虑之后优化为多选
+const EXTRA_REGEXP: RegExp = /\((.*)\)/;
 
+interface TokenRuleArr {
+  match: (str: string) => boolean,
+  getRenderAction: Function,
+  formatAction: Function
+}
+
+/* ========================== 重构getRenderData function ================================ */
 /**
- * 对于还需取下一级的继续向下取 
+ * 使用字符串切割，不使用递归取值，优化一个速度的问题
  */
-function handleGetData(obj: any, currentKey: string, nextPath: string, history: string) {
-  let r = {};
-  if (isObj(obj)) {
-    const keyArr = currentKey === ALL ? Object.keys(obj) : [currentKey];
-    keyArr.forEach(key => {
-      r = Object.assign(r, getData(obj[key], nextPath, `${history}.${key}`));
-    })
-  } else if (isArr(obj)) {
-    if (currentKey === ALL) {
-      obj.forEach((_: any, index: number) => {
-        r = Object.assign(r, getData(obj[index], nextPath, `${history}_${index}`));
-      })
-    } else if (isNumber(currentKey)) {
-      r = Object.assign(r, getData(obj[Number(currentKey)], nextPath, `${history}_${currentKey}`));
-    }
+export function getRenderData(config: Array<FormConfig>, data: any): Array<FormConfig> {
+  if (!data) return config;
+  const rConfig = JSON.parse(JSON.stringify(config));
+  for (let i = 0; i < rConfig.length; i++) {
+    rConfig[i].value = getDataByPath(rConfig[i].key, data);
   }
-  return r;
+  console.log(rConfig);
+  return rConfig;
 }
 
 /**
- * 责任链式判断 拆分if-else
- * @param {number} oi - objectIndex
- * @param {number} ai - arrayIndex
- * 
- * @return {object} r 返回的结果
+ * 根据路径去获取数据，在最后一个数据会进入token函数取值
+ * @param path 路径
+ * @param data 数据
  */
-const rules = [
-  {
-    match: (oi: number, ai: number) => (oi === ai),
-    action: function (oi: number, ai: number, path: string, obj: any, history: string) {
-      // 只提取基本数据类型
-      // if(isBase(obj) === ONLYBASE) return {};
-      const r: { [key: string]: any } = {};
-      if (path === ALL) {
-        // 取全部值暂时不处理 
+function getDataByPath(path: string, data: any): any {
+  const pathArr = path.split(OBJECT_KEY);
+  let res: any = data;
+  const len = pathArr.length;
+  // 输入的第一个会有个点，pathArr[0]为"";
+  for (let i = 1; i < len; i++) {
+    // 这里写一个取值检查特殊符号的函数就行了
+    if (i === len - 1) {
+      res = getDataByToken(pathArr[i], res);
+      continue;
+    }
+    res = res[pathArr[i]];
+  }
+  return res;
+}
 
-        // if (isObj(obj)) {
-        //   Object.keys(obj).forEach((key: string) => {
-        //     if (isBase(obj[key]) === ONLYBASE) {
-        //       r[`${history}.${key}`] = obj[key];
-        //     }
-        //   })
-        // } else if (isArr(obj)) {
-        //   obj.forEach((v: any, index: number) => {
-        //     if (isBase(v) === ONLYBASE) {
-        //       r[`${history}_${index}`] = v;
-        //     }
-        //   })
-        // }
-      } else {
-        if (isObj(obj)) {
-          // keyNote转换
-          if (extra.test(path)) {
-            const extraKey = extra.exec(path)[1];
-            const originKey = origin.exec(path)[1];
-            r[`${history}.${path}`] = (extraKey !== null && originKey !== null) ? {
-              [originKey]: obj[originKey],
-              [originKey + extraKey]: obj[originKey + extraKey]
-            } : {}
-          } else {
-            r[`${history}.${path}`] = obj[path];
-          }
-        } else if (isArr(obj) && isNumber(path)) {
-          r[`${history}_${path}`] = obj[Number(path)];
+/**
+ * 根据string识别出token进行取值
+ * 不匹配规则就走默认的返回
+ */
+function getDataByToken(str: string, data: any) {
+  for (let i = 0, len = tokenRuleArr.length; i < len; i++) {
+    if (tokenRuleArr[i].match(str)) {
+      return tokenRuleArr[i].getRenderAction(str, data);
+    }
+  }
+  return data[str];
+}
+
+/**
+ * token 责任链
+ * 0 - 匹配 () 仅做一个圆括号的匹配 提取出一个对象
+ *     prefixKey - 圆括号前的key
+ * 1 - 匹配 +  提取出一个对象
+ */
+const tokenRuleArr: Array<TokenRuleArr> = [
+  {
+    match: (str: string) => EXTRA_REGEXP.test(str),
+    getRenderAction: function (str: string, data: any): any {
+      const regExpRes = EXTRA_REGEXP.exec(str);
+      if (regExpRes) {
+        const prefixKey = str.substring(0, regExpRes.index);
+        const targetKey = prefixKey + regExpRes[1];
+        if (!prefixKey) {
+          console.warn("prefixKey is undefined of empty string");
+          return data[str];
+        }
+        return {
+          [prefixKey]: data[prefixKey],
+          [targetKey]: data[targetKey]
         }
       }
-      return r;
+      return data[str];
+    },
+    formatAction: function (str: string, data: any): any {
+      return { [str]: data };
     }
-  }, {
-    match: (oi: number, ai: number) => (oi === -1 && ai !== -1),
-    action: function (oi: number, ai: number, path: string, obj: any, history: string) {
-      const currentKey = path.substring(0, ai);
-      const nextPath = path.substring(ai + 1, path.length);
-      let r = {};
-      r = handleGetData(obj, currentKey, nextPath, history);
-      return r;
-    }
-  }, {
-    match: (oi: number, ai: number) => (oi !== -1 && ai === -1),
-    action: function (oi: number, ai: number, path: string, obj: any, history: string) {
-      const currentKey = path.substring(0, oi);
-      const nextPath = path.substring(oi + 1, path.length);
-      let r = {};
-      r = handleGetData(obj, currentKey, nextPath, history);
-      return r;
-    }
-  }, {
-    match: (oi: number, ai: number) => (oi !== -1 && ai !== -1 && oi < ai),
-    action: function (oi: number, ai: number, path: string, obj: any, history: string) {
-      const currentKey = path.substring(0, ai);
-      const nextPath = path.substring(ai + 1, path.length);
-      const r = handleGetData(obj, currentKey, nextPath, history);
-      return r;
-    }
-  }, {
-    match: (oi: number, ai: number) => (oi !== -1 && ai !== -1 && oi > ai),
-    action: function (oi: number, ai: number, path: string, obj: any, history: string) {
-      const currentKey = path.substring(0, ai);
-      const nextPath = path.substring(ai + 1, path.length);
-      const r = handleGetData(obj, currentKey, nextPath, history);
-      return r;
+  },
+  {
+    match: (str: string) => str.includes(PLUS_KEY),
+    getRenderAction: function (str: string, data: any): any {
+      const res: any = {};
+      const strArr = str.split(PLUS_KEY);
+      strArr.forEach((v: any) => {
+        if (v) {
+          res[v] = data[v];
+        }
+      });
+      return res;
+    },
+    formatAction: function (str: string, data: any): any {
+      return { [str]: data };
     }
   }
 ]
 
-/**
- * 入口方法
- */
-function getData(obj: any, path: string, history: string): object {
-  if (!path) { console.warn('path is undefined'); return {}; }
-  if (path === ALL) {
-    return { [`.${path}`]: obj };
-  }
-  if (isBase(obj)) { return {}; }
-  let r = {};
-  const oi = path.indexOf(o);
-  const ai = path.indexOf(a);
-  for (let i = 0; i < rules.length; i++) {
-    if (rules[i].match(oi, ai)) {
-      r = Object.assign(r, rules[i].action(oi, ai, path, obj, history))
-    }
-  }
-  return r;
-}
-
-/**
- * 遍历路径数组
- */
-export function loopPath(obj: any, pathArr: Array<string>): object {
-  let r = {};
-  pathArr.forEach((path: string) => {
-    // TODO 目前现在这个位置进行修改，之后再考虑那个点需不需要改
-    path = path.substring(1, path.length);
-    r = {
-      ...r,
-      ...getData(obj, path, "")
-    }
+/* ============================== 重构 本地格式转为接口格式 ==================================== */
+export function getFormData(data: { [key: string]: { value: any, path: string } }): any {
+  const res: any = {};
+  Object.keys(data).forEach((v: string) => {
+    generateObjectByPath(
+      data[v].path, data[v].value
+    );
   });
-  return r;
+  return data;
 }
 
-/**
- * 获取render所需的data结构
- */
-export function getRenderData(config: Array<FormConfig>, data: any): Array<FormConfig> {
-  if (!data) {
-    return config;
+function generateObjectByPath(path: string, value: any): any {
+  const pathArr = path.split(OBJECT_KEY);
+  const len = pathArr.length;
+  let res: any = value;
+  // 从数组后端向前遍历，对最后的一个(len-1)这个才需要做匹配
+  for (let i = len - 1; i > 0; i--) {
+    if (i === len - 1) {
+      res = formatByToken(pathArr[i], res);
+      continue;
+    }
+    res = { [pathArr[i]]: res };
   }
-  const rConfig = JSON.parse(JSON.stringify(config));
-  const cData: { [key: string]: any } = loopPath(data, rConfig.map(v => v.key));
-  for (let i = 0; i < rConfig.length; i++) {
-    rConfig[i].value = cData[rConfig[i].key];
+  console.log(res);
+}
+
+function formatByToken(str: string, data: any): any {
+  for (let i = 0, len = tokenRuleArr.length; i < len; i++) {
+    if (tokenRuleArr[i].match(str)) {
+      return tokenRuleArr[i].formatAction(str, data);
+    }
   }
-  return rConfig;
+  return data;
 }
 
 /* ============================== 本地格式转为接口格式 ==================================== */
@@ -213,7 +192,7 @@ function newObj(parentKey: string, currentKey: string, data: any) {
           g[parentKey][originKey] = data[originKey];
           g[parentKey][originKey + extraKey] = data[originKey + extraKey];
         }
-        r = _assign(r, g);
+        r = _assign(r, toFormat(g));
       } else {
         g[parentKey][currentKey] = data;
         r = _assign(r, toFormat(g));
@@ -309,12 +288,13 @@ function toFormat(data: { [key: string]: any }): object {
   return r;
 }
 
-export function getFormData(data: Array<{ value: any, path: string }>): object {
+function getFormData1(data: Array<{ value: any, path: string }>): object {
   let r = {};
+  console.log(data);
   Object.keys(data).forEach((key: string) => {
     r = _assign(r, toFormat({
       [data[key].path]: data[key].value
-    }))
+    }));
   })
   return r;
 }

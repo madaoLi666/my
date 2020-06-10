@@ -2,15 +2,14 @@
 @normalFontSize: 14px;
 @labelPaddingRight: 5px;
 
-@labelColor:rgba(0,0,0,.85);
+@labelcolor: #000000;
 @formItemLabelWidth: 120px;
 @formItemUnitWidth: 45px;
 
 @labelLineColor: #f0f0f0;
 @backgroundColor: #ffffff;
 
-
-.my-form {
+.custom-my-form {
   width: 90%;
   padding: 1rem 0;
   margin: 0 auto;
@@ -20,8 +19,15 @@
   }
 
   // 用于custom类的组件沾满width
-  .my-form {
+  .custom-my-form {
     width: 100% !important;
     padding: 0;
+    margin-bottom: @normalInputHeight / 2;
+  }
+  // 表单调试样式
+  .input-cover {
+    // font-size: 15px;
+    font-weight: 600;
+    color: #150f55;
   }
 }

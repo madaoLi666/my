@@ -18,8 +18,7 @@ interface MyCustomProps {
 interface MyCustomState {
   formHandler: {
     [key: string]: any
-  },
-  isSubscribe: boolean
+  }
 }
 
 // 这里的formHandler不与业务页面的formHandler合并；这里需要一个方法对外抛出change的事件
@@ -27,13 +26,12 @@ export default class MyCustom extends Component<MyCustomProps, MyCustomState>{
   constructor(props: MyCustomProps) {
     super(props);
     this.state = {
-      formHandler: {},
-      isSubscribe: false
+      formHandler: {}
     };
   }
 
   componentDidUpdate(prevProps: MyCustomProps, prevStata: MyCustomState) {
-    const { formHandler, isSubscribe } = this.state;
+    const { formHandler } = this.state;
     const { onChange, subscribe } = this.props;
     if (JSON.stringify(this.props.input_props.config) !== JSON.stringify(prevProps.input_props.config)
       || this.state.formHandler.uuid !== prevStata.formHandler.uuid
@@ -52,12 +50,6 @@ export default class MyCustom extends Component<MyCustomProps, MyCustomState>{
         });
       }
     }
-    // TODO 暂时先这样去处理subscribe队列的情况，以后再重构
-    // if (!isSubscribe) {
-    //   if (subscribe && JSON.stringify(formHandler) !== "{}") {
-    //     this.setState({ isSubscribe: true });
-    //   }
-    // }
     if (this.props.getValidFun) {
       this.props.getValidFun(formHandler.valid);
     }

@@ -30,7 +30,7 @@ const data = {
 	// 疾病史
 	"g": {
 		"id": 8,
-		"a": "initial a",
+		"a": true,
 		"aNote": "initial aNote",
 		"b": null,
 		"bNote": null,

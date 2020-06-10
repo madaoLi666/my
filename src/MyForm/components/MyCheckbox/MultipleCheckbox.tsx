@@ -1,6 +1,6 @@
 import React, { Component, ReactNode } from 'react';
 import CheckboxWithExtra from '../Base/CheckboxWithExtra';
-import styles from './MultipleCheckbox.less';
+import './MultipleCheckbox.less';
 
 /**
  * 外部数据格式应为
@@ -68,7 +68,7 @@ export default class MultipleCheckbox extends Component<MultipleCheckboxProps>{
   }
 
   render() {
-    return <div className={styles['multiple-checkbox']}>
+    return <div className='multiple-checkbox'>
       {this.renderCheckbox()}
     </div>
   }

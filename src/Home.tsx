@@ -27,10 +27,6 @@ export default class Home extends React.Component<{},HomeState>{
     }
   }
 
-  componentDidUpdate(){
-    console.log("Home componentDidUpdate");
-  }
-
   changeData = () => {
     this.setState({
       data: {
