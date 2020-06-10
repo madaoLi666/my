@@ -35,7 +35,7 @@ const config1: Array<FormConfig> = [
 const config: Array<FormConfig> = [
   {
     name: "custom",
-    key: ".q.a(Note)",
+    key: ".q.(Note)",
     input_type: "checkbox",
     label: "custom",
     input_props: {
